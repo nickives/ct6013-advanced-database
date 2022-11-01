@@ -1,0 +1,70 @@
+{
+  "plugins": [
+    "import",
+    "react"
+  ],
+  "extends": [
+    "airbnb",
+    "eslint:recommended", 
+    "plugin:@typescript-eslint/eslint-recommended",
+    "plugin:@typescript-eslint/recommended",
+    "plugin:react/recommended",
+    "plugin:react-hooks/recommended"
+  ],
+  "parser": "@typescript-eslint/parser",
+  "rules": {
+    "no-param-reassign": ["error", { "props": true, "ignorePropertyModificationsFor": ["state"] }],
+    "react/jsx-props-no-spreading": ["error", {
+      "html": "ignore"
+    }],
+    "camelcase": ["error", {"ignoreImports": true}],
+    "import/no-extraneous-dependencies": [
+      "error",
+      {
+        "devDependencies": [
+          "**/*.spec.*",
+          "**/*.stories.*",
+          "**/.storybook/**/*.*"
+        ]
+      }
+    ],
+    "no-shadow": "off",
+    "no-nested-ternary": 0,
+    "space-in-parens": "off",
+    "semi": "off",
+    "@typescript-eslint/semi": ["error"],
+    "@typescript-eslint/no-shadow": "error",
+    "no-use-before-define": "off",
+    "react/prop-types": 0,
+    //"@typescript-eslint/no-use-before-define": "error",
+    "react/jsx-filename-extension": [1, { "extensions": [".ts", ".tsx"] }],
+    "react/jsx-curly-spacing": [1, { "when": "always" }],
+    "object-curly-spacing": [1, "always"],
+    "react/function-component-definition": [2, {
+      "namedComponents": "arrow-function",
+      "unnamedComponents": "arrow-function"
+    }],
+    "react/jsx-one-expression-per-line": 0,
+    "no-plusplus": ["error", { "allowForLoopAfterthoughts": true }],
+    "object-shorthand": ["error", "consistent"],
+    "import/extensions": [2, "never"],
+    "object-curly-newline": ["error", {"consistent": true}],
+    "jsx-a11y/label-has-associated-control": [ 2, {
+      "controlComponents": ["Field"],
+      "depth": 3
+    }],
+    "no-underscore-dangle": [0],
+    "no-unused-expressions": ["error", { "allowTernary": true }],
+    "react/require-default-props": [0]
+  },
+  "settings": {
+    "import/parsers": {
+      "@typescript-eslint/parser": [".ts", ".tsx"]
+    },
+    "import/resolver": {
+      "typescript": {
+        "alwaysTryTypes": true // always try to resolve types under `<root>@types` directory even it doesn't contain any source code, like `@types/unist`
+      }
+    }
+  }
+}
