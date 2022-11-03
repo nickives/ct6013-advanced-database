@@ -22,16 +22,15 @@ export default {
       <RouterProvider router={ router } />
     );
   }],
+  parameters: { msw: { handlers: handlers } }
 } as Meta<typeof CreateModule>;
 
 const Template: Story<typeof CreateModule> = () => <CreateModule />;
 
 export const Default = Template.bind({});
-Default.parameters = {
-  msw: { handlers: handlers },
-};
 
-Default.play = async ({ canvasElement }) => {
+export const SuccessfulSubmit = Template.bind({});
+SuccessfulSubmit.play = async ({ canvasElement }) => {
   const canvas = within(canvasElement);
   await waitFor(() => expect(canvas.getByTestId('course-select')).toBeInTheDocument());
   await waitFor(() => expect(canvas.getByTestId('lecturer-select')).toBeInTheDocument());
@@ -47,14 +46,27 @@ Default.play = async ({ canvasElement }) => {
   const lecturerOption = screen.getByRole('option', { name: /john doe 0/i });
   await userEvent.click(lecturerOption);
 
+  await userEvent.type(canvas.getByRole('textbox', { name: /module code/i }), 'COMP0000');
+  await userEvent.type(canvas.getByRole('textbox', { name: /CAT points/i }), '{Backspace}10');
+  await userEvent.type(canvas.getByRole('textbox', { name: /semester/i }), '1');
+
   await userEvent.click(canvas.getByRole('button', { name: /submit/i }));
   await waitFor(() => expect(canvas.getByText(/created module computing/i)).toBeInTheDocument());
 };
 
-export const WithServerError = Template.bind({});
-WithServerError.parameters = {
-  msw: { handlers: handlers },
+export const WithValidationError = Template.bind({});
+WithValidationError.play = async ({ canvasElement }) => {
+  const canvas = within(canvasElement);
+  await waitFor(() => expect(canvas.getByTestId('course-select')).toBeInTheDocument());
+  await waitFor(() => expect(canvas.getByTestId('lecturer-select')).toBeInTheDocument());
+  await userEvent.click(canvas.getByRole('button', { name: /submit/i }));
+  await waitFor(() => expect(canvas.getByText(/module name is required/i)).toBeInTheDocument());
+  expect(canvas.getByText(/module code is required/i)).toBeInTheDocument();
+  expect(canvas.getByText(/CAT points are required/i)).toBeInTheDocument();
+  expect(canvas.getByText(/semester is required/i)).toBeInTheDocument();
 };
+
+export const WithServerError = Template.bind({});
 WithServerError.play = async ({ canvasElement }) => {
   const canvas = within(canvasElement);
   await waitFor(() => expect(canvas.getByTestId('course-select')).toBeInTheDocument());
@@ -73,28 +85,4 @@ WithServerError.play = async ({ canvasElement }) => {
 
   await userEvent.click(canvas.getByRole('button', { name: /submit/i }));
   await waitFor(() => expect(canvas.getByText(/server error/i)).toBeInTheDocument());
-};
-
-export const WithUniqueError = Template.bind({});
-WithUniqueError.parameters = {
-  msw: { handlers: handlers },
-};
-WithUniqueError.play = async ({ canvasElement }) => {
-  const canvas = within(canvasElement);
-  await waitFor(() => expect(canvas.getByTestId('course-select')).toBeInTheDocument());
-  await waitFor(() => expect(canvas.getByTestId('lecturer-select')).toBeInTheDocument());
-  await userEvent.type(canvas.getByRole('textbox', { name: /module name/i }), 'uniqueErrorTest');
-  // We have to do magic to get the actual UI element 😿
-  const courseButton = canvas.getByTestId('course-select').children[0];
-  await userEvent.click(courseButton);
-  const courseOption = screen.getByRole('option', { name: /course 0/i });
-  await userEvent.click(courseOption);
-
-  const lecturerButton = canvas.getByTestId('lecturer-select').children[0];
-  await userEvent.click(lecturerButton);
-  const lecturerOption = screen.getByRole('option', { name: /john doe 0/i });
-  await userEvent.click(lecturerOption);
-
-  await userEvent.click(canvas.getByRole('button', { name: /submit/i }));
-  await waitFor(() => expect(canvas.getByText(/module name already exists/i)).toBeInTheDocument());
 };

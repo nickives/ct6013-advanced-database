@@ -105,14 +105,6 @@ export const handlers = [
         }),
       );
     }
-    if (name === 'uniqueErrorTest') {
-      return res(
-        ctx.status(409),
-        ctx.json({
-          error: 'Error: Module name already exists',
-        }),
-      );
-    }
     return res(
       ctx.status(201),
       ctx.json({

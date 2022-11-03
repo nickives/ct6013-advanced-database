@@ -14,8 +14,11 @@ import postJSON from 'lib/postJSON';
 
 interface FormData {
   name: string;
+  code: string;
   courseId: string;
   lecturerId: string;
+  catPoints: number;
+  semester: string;
 }
 
 interface ResultData {
@@ -24,9 +27,12 @@ interface ResultData {
 }
 
 const schema = yup.object({
-  name: yup.string().required(),
-  courseId: yup.string().required(),
-  lecturerId: yup.string().required(),
+  name: yup.string().required('Module Name is required'),
+  code: yup.string().required('Module code is required'),
+  courseId: yup.string().required('Pick a course'),
+  lecturerId: yup.string().required('Pick a lecturer'),
+  catPoints: yup.number().integer().min(1, 'CAT points are required').required('CAT points are required'),
+  semester: yup.string().required('Semester is required'),
 }).required();
 
 export interface CreateModuleData {
@@ -90,82 +96,126 @@ const CreateModule = () => {
                 />
               ) }
             />
-            <Suspense fallback={ <>😸CourseLoading😸</> }>
-              <Await
-                resolve={ courses }
-                errorElement={ <>😿</> }
-              >
-                { (coursesArg: Course[]) => (
-                  <FormControl fullWidth>
-                    <Controller
-                      name="courseId"
-                      control={ control }
-                      rules={ { required: true } }
-                      defaultValue=""
-                      render={ ({ field }) => (
-                        <>
-                          <InputLabel id="course-select-label">Course</InputLabel>
+            <Box>
+              <Suspense fallback={ <>😸CourseLoading😸</> }>
+                <Await resolve={ courses } errorElement={ <>😿</> }>
+                  { (coursesArg: Course[]) => (
+                    <FormControl fullWidth>
+                      <Controller
+                        name="courseId"
+                        control={ control }
+                        rules={ { required: true } }
+                        defaultValue=""
+                        render={ ({ field }) => (
+                          <>
+                            <InputLabel id="course-select-label">Course</InputLabel>
+                            <Select
+                              // eslint-disable-next-line react/jsx-props-no-spreading
+                              { ...field }
+                              labelId="course-select-label"
+                              id="courseId"
+                              label="Course"
+                              error={ errors?.courseId?.message !== undefined }
+                              data-testid="course-select"
+                            >
+                              {coursesArg.map((course: Course) => (
+                                <MenuItem key={ course.id } value={ course.id }>
+                                  {course.name}
+                                </MenuItem>
+                              )) }
+                            </Select>
+                          </>
+                        ) }
+                      />
+                    </FormControl>
+                  ) }
+                </Await>
+              </Suspense>
+            </Box>
+            <Box>
+              <Suspense fallback={ <>😸LecturerLoading😸</> }>
+                <Await resolve={ lecturers } errorElement={ <>😿</> }>
+                  { (lecturersArg: Lecturer[]) => (
+                    <FormControl fullWidth>
+                      <InputLabel>Lecturer</InputLabel>
+                      <Controller
+                        name="lecturerId"
+                        control={ control }
+                        rules={ { required: true } }
+                        defaultValue=""
+                        render={ ({ field }) => (
                           <Select
                             // eslint-disable-next-line react/jsx-props-no-spreading
                             { ...field }
-                            labelId="course-select-label"
-                            id="courseId"
-                            label="Course"
-                            error={ errors?.courseId?.message !== undefined }
-                            data-testid="course-select"
+                            labelId="lecturer"
+                            id="lecturer"
+                            label="Lecturer"
+                            error={ errors?.lecturerId?.message !== undefined }
+                            data-testid="lecturer-select"
                           >
-                            {coursesArg.map((course: Course) => (
-                              <MenuItem key={ course.id } value={ course.id }>
-                                {course.name}
+                            {lecturersArg.map((lecturer: Lecturer) => (
+                              <MenuItem key={ lecturer.id } value={ lecturer.id }>
+                                {lecturer.name}
                               </MenuItem>
                             )) }
                           </Select>
-                        </>
-                      ) }
-                    />
-                  </FormControl>
-                ) }
-              </Await>
-            </Suspense>
-            <Suspense fallback={ <>😸LecturerLoading😸</> }>
-              <Await
-                resolve={ lecturers }
-                errorElement={ <>😿</> }
-              >
-                { (lecturersArg: Lecturer[]) => (
-                  <FormControl fullWidth>
-                    <InputLabel>Lecturer</InputLabel>
-                    <Controller
-                      name="lecturerId"
-                      control={ control }
-                      rules={ { required: true } }
-                      defaultValue=""
-                      render={ ({ field }) => (
-                        <Select
-                          // eslint-disable-next-line react/jsx-props-no-spreading
-                          { ...field }
-                          labelId="lecturer"
-                          id="lecturer"
-                          label="Lecturer"
-                          error={ errors?.lecturerId?.message !== undefined }
-                          data-testid="lecturer-select"
-                        >
-                          {lecturersArg.map((lecturer: Lecturer) => (
-                            <MenuItem key={ lecturer.id } value={ lecturer.id }>
-                              {lecturer.name}
-                            </MenuItem>
-                          )) }
-                        </Select>
-                      ) }
-                    />
-                  </FormControl>
-                ) }
-              </Await>
-            </Suspense>
-            <Box sx={ {
-              gridColumn: '1/3',
-            } }
-            >
+                        ) }
+                      />
+                    </FormControl>
+                  ) }
+                </Await>
+              </Suspense>
+            </Box>
+            <Controller
+              name="code"
+              control={ control }
+              rules={ { required: true } }
+              defaultValue=""
+              render={ ({ field }) => (
+                <TextField
+                  // eslint-disable-next-line react/jsx-props-no-spreading
+                  { ...field }
+                  variant="filled"
+                  label="Module Code"
+                  error={ errors?.code?.message !== undefined }
+                  helperText={ errors?.code?.message }
+                />
+              ) }
+            />
+            <Controller
+              name="catPoints"
+              control={ control }
+              rules={ { required: true } }
+              defaultValue={ 0 }
+              render={ ({ field }) => (
+                <TextField
+                  // eslint-disable-next-line react/jsx-props-no-spreading
+                  { ...field }
+                  variant="filled"
+                  label="CAT Points"
+                  inputProps={ { inputMode: 'numeric', pattern: '[0-9]*' } }
+                  error={ errors?.catPoints?.message !== undefined }
+                  helperText={ errors?.catPoints?.message }
+                />
+              ) }
+            />
+            <Controller
+              name="semester"
+              control={ control }
+              rules={ { required: true } }
+              defaultValue=""
+              render={ ({ field }) => (
+                <TextField
+                  // eslint-disable-next-line react/jsx-props-no-spreading
+                  { ...field }
+                  variant="filled"
+                  label="Semester"
+                  error={ errors?.semester?.message !== undefined }
+                  helperText={ errors?.semester?.message }
+                />
+              ) }
+            />
+            <Box sx={ { gridColumn: '1/3' } }>
               {
               error
                 ? <Alert severity="error">{error.message}</Alert>
