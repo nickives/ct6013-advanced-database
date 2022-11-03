@@ -88,6 +88,7 @@
     "babel-plugin-named-exports-order": "^0.0.2",
     "eslint-config-airbnb": "^19.0.4",
     "eslint-import-resolver-typescript": "^3.5.2",
+    "eslint-plugin-storybook": "^0.6.7",
     "msw": "^0.47.4",
     "msw-storybook-addon": "^1.6.3",
     "postcss": "^8.4.18",
