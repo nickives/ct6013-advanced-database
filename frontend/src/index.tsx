@@ -5,7 +5,7 @@ import ReactDOM from 'react-dom/client';
 import { createBrowserRouter, RouterProvider, createRoutesFromElements, Route } from 'react-router-dom';
 
 // COMPONENTS
-import { CreateCourse, CreateModule, CreateLecturer } from 'features/admin';
+import { CreateCourse, CreateModule, CreateLecturer, createModuleLoader } from 'features/admin';
 import { NavbarProvider } from 'features/navbar';
 import { AdminRoot, AdminIndex, ErrorPage, Home, Root, NoMatch } from 'routes';
 
@@ -26,7 +26,7 @@ const router = createBrowserRouter(
       <Route path="/admin" element={ <AdminRoot /> }>
         <Route index element={ <AdminIndex /> } />
         <Route path="create-course" element={ <CreateCourse /> } />
-        <Route path="create-module" element={ <CreateModule /> } />
+        <Route path="create-module" element={ <CreateModule /> } loader={ createModuleLoader }/>
         <Route path="create-lecturer" element={ <CreateLecturer /> } />
       </Route>
       <Route path="*" element={ <NoMatch /> } />
