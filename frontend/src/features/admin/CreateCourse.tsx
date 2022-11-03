@@ -22,7 +22,7 @@ const CreateCourse = () => {
   const {
     control, handleSubmit, getValues, formState: { errors },
   } = useForm<FormData>({ resolver: yupResolver(schema) });
-  const [loading, error, data, submitFn] = useRESTSubmit<ResultData, FormData>('/api/create-lecturer');
+  const [loading, error, data, submitFn] = useRESTSubmit<ResultData, FormData>('/api/create-course');
 
   return (
     <Box

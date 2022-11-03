@@ -31,7 +31,7 @@ Default.play = async ({ canvasElement }) => {
 export const WithError = Template.bind({});
 WithError.parameters = {
   msw: {
-    handlers: handlers.slice(0, 3),
+    handlers: handlers,
   },
 };
 WithError.play = async ({ canvasElement }) => {
