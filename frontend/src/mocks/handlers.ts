@@ -92,9 +92,7 @@ export const handlers = [
 
   // Handles a POST create-module request
   rest.post('/api/create-module', async (req, res, ctx) => { // 4
-    const {
-      name, courseId, lecturerId,
-    }: {
+    const { name }: {
       name: string; courseId: string; lecturerId: string;
     } = await req.json();
     if (name === 'errorTest') {
@@ -115,7 +113,7 @@ export const handlers = [
   }),
 
   // Handles a POST courses request
-  rest.post('/api/courses', async (req, res, ctx) => { // 2
+  rest.post('/api/courses', async (req, res, ctx) => { // 5
     const { page, limit }: { page: number; limit: number } = await req.json();
     const start = page * limit;
     const end = start + limit;
@@ -123,6 +121,28 @@ export const handlers = [
     return res(
       ctx.status(200),
       ctx.json(data),
+    );
+  }),
+
+  // Handles a POST create-student request
+  rest.post('/api/create-student', async (req, res, ctx) => { // 6
+    const { firstName, lastName } = await req.json();
+    if (firstName === 'errorTest') {
+      return res(
+        ctx.status(500),
+        ctx.json({
+          error: 'Internal Server Error',
+        }),
+      );
+    }
+    return res(
+      ctx.status(201),
+      ctx.json({
+        id: '1',
+        firstName: firstName,
+        lastName: lastName,
+        number: 's1234567',
+      }),
     );
   }),
 ];
