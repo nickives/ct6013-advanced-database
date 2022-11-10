@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="JpaBuddyIdeaProjectConfig" migrateIndexesAndConstraints="true">
+    <option name="defaultUnitInitialized" value="true" />
+    <option name="renamerInitialized" value="true" />
+    <option name="reverseEngineeringLastDbConnectionId" value="0cca8712-d777-4899-abc6-7e8e6410a887" />
+    <option name="reLastEntityCreationPackage" value="backend/src/main/java/uk/edu/glos/s1909632/ct6013/backend/ents/oracle" />
+    <reUseDbSnapshotConnections>
+      <dbConnection id="0cca8712-d777-4899-abc6-7e8e6410a887" />
+    </reUseDbSnapshotConnections>
+    <option name="newEntityIdType" value="Integer" />
+    <option name="newEntityIdStrategy" value="Identity" />
+    <option name="reIgnoreSlowDbConnections">
+      <ignoreDs id="0cca8712-d777-4899-abc6-7e8e6410a887" />
+    </option>
+  </component>
+</project>

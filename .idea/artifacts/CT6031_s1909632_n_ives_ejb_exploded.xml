@@ -1,0 +1,9 @@
+<component name="ArtifactManager">
+  <artifact type="exploded-ejb" name="CT6031-s1909632-n-ives:ejb exploded">
+    <output-path>$PROJECT_DIR$/out/artifacts/CT6031_s1909632_n_ives_ejb_exploded</output-path>
+    <root id="root">
+      <element id="javaee-facet-resources" facet="CT6031-s1909632-n-ives/ejb/EJB" />
+      <element id="module-output" name="CT6031-s1909632-n-ives" />
+    </root>
+  </artifact>
+</component>

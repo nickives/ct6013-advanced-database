@@ -10,26 +10,67 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="2c4b247a-9448-425e-962a-f2de2f145405" name="Changes" comment="Initial commit">
+      <change afterPath="$PROJECT_DIR$/.idea/artifacts/CT6031_s1909632_n_ives_ejb_exploded.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/dataSources.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/jpa-buddy.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/sqldialects.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/uiDesigner.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/backend/src/main/java/uk/edu/glos/s1909632/ct6013/backend/RegisterLecturerServlet.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/backend/src/main/java/uk/edu/glos/s1909632/ct6013/backend/ents/Course.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/backend/src/main/java/uk/edu/glos/s1909632/ct6013/backend/ents/Lecturer.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/backend/src/main/java/uk/edu/glos/s1909632/ct6013/backend/ents/Module.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/backend/src/main/java/uk/edu/glos/s1909632/ct6013/backend/ents/Student.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/backend/src/main/java/uk/edu/glos/s1909632/ct6013/backend/ents/oracle/CourseEntity.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/backend/src/main/java/uk/edu/glos/s1909632/ct6013/backend/ents/oracle/LecturerEntity.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/backend/src/main/java/uk/edu/glos/s1909632/ct6013/backend/ents/oracle/ModuleEntity.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/backend/src/main/java/uk/edu/glos/s1909632/ct6013/backend/ents/oracle/StudentEntity.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/backend/src/main/java/uk/edu/glos/s1909632/ct6013/backend/ents/oracle/StudentModuleEntity.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/backend/src/main/java/uk/edu/glos/s1909632/ct6013/backend/ents/oracle/StudentModuleEntityId.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/package-lock.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/package.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/App.css" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/App.test.tsx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/App.tsx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/index.css" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/index.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/index.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/index.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/logo.svg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/setupTests.ts" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/setupTests.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/tsconfig.json" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/tsconfig.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/backend/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/example/backend/HelloServlet.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/uk/edu/glos/s1909632/ct6013/backend/HelloServlet.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/src/main/resources/META-INF/persistence.xml" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/resources/META-INF/persistence.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/src/main/webapp/index.jsp" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/webapp/api/index.jsp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/features/admin/CreateModule.stories.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/features/admin/CreateModule.stories.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/mocks/handlers.ts" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/mocks/handlers.ts" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="hibernate-configuration-5.2" />
+        <option value="hibernate-main-5.2" />
+        <option value="Class" />
+        <option value="com.haulmont.jpb.JpaEntity" />
+        <option value="Interface" />
+      </list>
+    </option>
+  </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
     <option name="ROOT_SYNC" value="SYNC" />
+  </component>
+  <component name="JpbToolWindowState">
+    <option name="myId2FirstActivated">
+      <map>
+        <entry key="com.haulmont.jpb.jpaInspector" value="true" />
+        <entry key="com.haulmont.jpb.jpaPalette" value="true" />
+        <entry key="com.haulmont.jpb.jpaStructure" value="true" />
+      </map>
+    </option>
+    <option name="myId2Visible">
+      <map>
+        <entry key="com.haulmont.jpb.jpaInspector" value="true" />
+        <entry key="com.haulmont.jpb.jpaPalette" value="false" />
+        <entry key="com.haulmont.jpb.jpaStructure" value="true" />
+      </map>
+    </option>
   </component>
   <component name="LogFilters">
     <option name="FILTER_ERRORS" value="false" />
@@ -49,6 +90,7 @@
   </component>
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
+    "JPA.DatabaseSchemaImportDialog": "0cca8712-d777-4899-abc6-7e8e6410a887",
     "RunOnceActivity.OpenProjectViewOnStart": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "SHARE_PROJECT_CONFIGURATION_FILES": "true",
@@ -61,13 +103,31 @@
     "node.js.selected.package.tslint": "(autodetect)",
     "nodejs_interpreter_path": "node",
     "nodejs_package_manager_path": "npm",
-    "settings.editor.selected.configurable": "preferences.lookFeel",
+    "project.structure.last.edited": "Artifacts",
+    "project.structure.proportion": "0.15",
+    "project.structure.side.proportion": "0.2248996",
+    "settings.editor.selected.configurable": "editor.preferences.completion",
     "ts.external.directory.path": "/Users/nicholasives/src/CT6031-s1909632-n-ives/frontend/node_modules/typescript/lib"
+  },
+  "keyToStringList": {
+    "DatabaseDriversLRU": [
+      "oracle"
+    ]
   }
 }]]></component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="$PROJECT_DIR$/backend/src/main/webapp/WEB-INF/lib" />
+    </key>
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/backend/src/main/webapp/api" />
+    </key>
+    <key name="ExtractSuperBase.RECENT_KEYS">
+      <recent name="uk.edu.glos.s1909632.ct6013.backend.ents" />
+    </key>
+    <key name="ImportMappingsDialog.RecentPackages">
+      <recent name="uk.edu.glos.s1909632.ct6013.backend.models.oracle" />
+      <recent name="" />
     </key>
   </component>
   <component name="RunAnythingCache">
@@ -161,6 +221,9 @@
       <updated>1666797133164</updated>
       <workItem from="1666797134243" duration="7830000" />
       <workItem from="1666813563283" duration="2911000" />
+      <workItem from="1667335540935" duration="12868000" />
+      <workItem from="1667524649767" duration="3833000" />
+      <workItem from="1667997356137" duration="13132000" />
     </task>
     <task id="LOCAL-00001" summary="Initial commit">
       <created>1666814376188</created>
@@ -187,7 +250,14 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
+    <ignored-roots>
+      <path value="$PROJECT_DIR$/backend" />
+    </ignored-roots>
     <MESSAGE value="Initial commit" />
     <option name="LAST_COMMIT_MESSAGE" value="Initial commit" />
+  </component>
+  <component name="XSLT-Support.FileAssociations.UIState">
+    <expand />
+    <select />
   </component>
 </project>
