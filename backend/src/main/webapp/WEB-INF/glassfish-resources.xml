@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE resources PUBLIC "-//Payara.fish//DTD Payara Server 4 Resource Definitions//EN" "https://raw.githubusercontent.com/payara/Payara-Community-Documentation/master/docs/modules/ROOT/pages/schemas/payara-resources_1_6.dtd">
+<resources>
+    <jdbc-resource pool-name="ct6013DB"
+                   jndi-name="java:app/ct6013DB" />
+
+    <jdbc-connection-pool datasource-classname="${ENV=DB_JDBC_DRIVER}"
+                          name="ct6013DB"
+                          res-type="javax.sql.ConnectionPoolDataSource">
+        <property name="URL" value="${ENV=DB_JDBC_URL}" />
+        <property name="User" value="${ENV=DB_USER}" />
+        <property name="Password" value="${ENV=DB_PASSWORD}" />
+    </jdbc-connection-pool>
+</resources>
