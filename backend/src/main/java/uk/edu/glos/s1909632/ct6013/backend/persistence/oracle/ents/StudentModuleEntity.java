@@ -1,4 +1,4 @@
-package uk.edu.glos.s1909632.ct6013.backend.ents.oracle;
+package uk.edu.glos.s1909632.ct6013.backend.persistence.oracle.ents;
 
 import jakarta.persistence.*;
 
