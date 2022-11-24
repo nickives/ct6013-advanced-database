@@ -13,7 +13,11 @@ import { AdminRoot, AdminIndex, ErrorPage, Home, Root, NoMatch } from 'routes';
 import './index.css';
 import reportWebVitals from './reportWebVitals';
 
-if (process.env.NODE_ENV === 'development') {
+// if we're directly connecting to the hot-reloading dev server, use mock data
+// if (window.location.port === '3000' || process.env.NODE_ENV === 'development') {
+if (window.location.port === '3000' || (
+  process.env.NODE_ENV === 'development' && window.location.hostname !== 'localhost'
+)) {
   // eslint-disable-next-line @typescript-eslint/no-var-requires, global-require
   const { worker } = require('./mocks/browser');
   worker.start();
@@ -26,7 +30,7 @@ const router = createBrowserRouter(
       <Route path="/admin" element={ <AdminRoot /> }>
         <Route index element={ <AdminIndex /> } />
         <Route path="create-course" element={ <CreateCourse /> } />
-        <Route path="create-module" element={ <CreateModule /> } loader={ createModuleLoader }/>
+        <Route path="create-module" element={ <CreateModule /> } loader={ createModuleLoader } />
         <Route path="create-lecturer" element={ <CreateLecturer /> } />
       </Route>
       <Route path="*" element={ <NoMatch /> } />
