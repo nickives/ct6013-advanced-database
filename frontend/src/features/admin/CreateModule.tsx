@@ -11,6 +11,7 @@ import * as yup from 'yup';
 import useRESTSubmit from 'hooks/rest-submit';
 import { Lecturer, Course } from 'types';
 import postJSON from 'lib/postJSON';
+import getJSON from 'lib/getJSON';
 
 interface FormData {
   name: string;
@@ -46,8 +47,8 @@ interface PagenationProps {
 }
 
 export const createModuleLoader = async () => {
-  const lecturers = postJSON<Lecturer[]>('/api/lecturers', { page: 0, limit: 100 });
-  const courses = postJSON<Course[]>('/api/courses', { page: 0, limit: 100 });
+  const lecturers = getJSON<Lecturer[]>('/api/lecturer');
+  const courses = getJSON<Course[]>('/api/course');
   return defer({ lecturers, courses });
 };
 
@@ -55,7 +56,7 @@ const CreateModule = () => {
   const {
     control, handleSubmit, getValues, formState: { errors },
   } = useForm<FormData>({ resolver: yupResolver(schema) });
-  const [loading, error, data, submitFn] = useRESTSubmit<ResultData, FormData>('/api/create-module');
+  const [loading, error, data, submitFn] = useRESTSubmit<ResultData, FormData>('/api/module');
   const { lecturers, courses } = useLoaderData() as CreateModuleData;
 
   return (
@@ -98,7 +99,7 @@ const CreateModule = () => {
             />
             <Box>
               <Suspense fallback={ <>😸CourseLoading😸</> }>
-                <Await resolve={ courses } errorElement={ <>😿</> }>
+                <Await resolve={ courses } errorElement={ <>😿Error😿</> }>
                   { (coursesArg: Course[]) => (
                     <FormControl fullWidth>
                       <Controller
@@ -134,7 +135,7 @@ const CreateModule = () => {
             </Box>
             <Box>
               <Suspense fallback={ <>😸LecturerLoading😸</> }>
-                <Await resolve={ lecturers } errorElement={ <>😿</> }>
+                <Await resolve={ lecturers } errorElement={ <>😿Error😿</> }>
                   { (lecturersArg: Lecturer[]) => (
                     <FormControl fullWidth>
                       <InputLabel>Lecturer</InputLabel>

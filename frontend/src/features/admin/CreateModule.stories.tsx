@@ -22,7 +22,7 @@ export default {
       <RouterProvider router={ router } />
     );
   }],
-  parameters: { msw: { handlers: handlers } }
+  parameters: { msw: { handlers: handlers } },
 } as Meta<typeof CreateModule>;
 
 const Template: Story<typeof CreateModule> = () => <CreateModule />;
@@ -82,6 +82,10 @@ WithServerError.play = async ({ canvasElement }) => {
   await userEvent.click(lecturerButton);
   const lecturerOption = screen.getByRole('option', { name: /john doe 0/i });
   await userEvent.click(lecturerOption);
+
+  await userEvent.type(canvas.getByRole('textbox', { name: /module code/i }), 'COMP0000');
+  await userEvent.type(canvas.getByRole('textbox', { name: /CAT points/i }), '{Backspace}10');
+  await userEvent.type(canvas.getByRole('textbox', { name: /semester/i }), '1');
 
   await userEvent.click(canvas.getByRole('button', { name: /submit/i }));
   await waitFor(() => expect(canvas.getByText(/server error/i)).toBeInTheDocument());

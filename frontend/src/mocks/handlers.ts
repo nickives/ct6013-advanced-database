@@ -38,8 +38,8 @@ for (let i = 0; i < 100; i += 1) {
 // eslint-disable-next-line import/prefer-default-export
 export const handlers = [
   // LECTURER HANDLERS
-  // Handles a POST create-lecturer lecturer request
-  rest.post('/api/create-lecturer', async (req, res, ctx) => { // 1
+  // Handles a POST lecturer request
+  rest.post('/api/lecturer', async (req, res, ctx) => { // 1
     const { name }: { name: string } = await req.json();
     if (name === 'errorTest') {
       return res(
@@ -58,9 +58,12 @@ export const handlers = [
     );
   }),
 
-  // Handles a POST lecturers request
-  rest.post('/api/lecturers', async (req, res, ctx) => { // 2
-    const { page, limit }: { page: number; limit: number } = await req.json();
+  // Handles a GET lecturer request
+  rest.get('/api/lecturer', async (req, res, ctx) => { // 2
+    const pageParam = req.url.searchParams.get('page');
+    const limitParam = req.url.searchParams.get('limit');
+    const page = pageParam ? parseInt(pageParam, 10) : 0;
+    const limit = limitParam ? parseInt(limitParam, 10) : lecturers.length;
     const start = page * limit;
     const end = start + limit;
     const data = lecturers.slice(start, end);
@@ -70,8 +73,8 @@ export const handlers = [
     );
   }),
 
-  // Handles a POST create-course request
-  rest.post('/api/create-course', async (req, res, ctx) => { // 3
+  // Handles a POST course request
+  rest.post('/api/course', async (req, res, ctx) => { // 3
     const { name }: { name: string } = await req.json();
     if (name === 'errorTest') {
       return res(
@@ -90,8 +93,8 @@ export const handlers = [
     );
   }),
 
-  // Handles a POST create-module request
-  rest.post('/api/create-module', async (req, res, ctx) => { // 4
+  // Handles a POST module request
+  rest.post('/api/module', async (req, res, ctx) => { // 4
     const { name }: {
       name: string; courseId: string; lecturerId: string;
     } = await req.json();
@@ -112,9 +115,12 @@ export const handlers = [
     );
   }),
 
-  // Handles a POST courses request
-  rest.post('/api/courses', async (req, res, ctx) => { // 5
-    const { page, limit }: { page: number; limit: number } = await req.json();
+  // Handles a GET course request
+  rest.get('/api/course', async (req, res, ctx) => { // 5
+    const pageParam = req.url.searchParams.get('page');
+    const limitParam = req.url.searchParams.get('limit');
+    const page = pageParam ? parseInt(pageParam, 10) : 0;
+    const limit = limitParam ? parseInt(limitParam, 10) : courses.length;
     const start = page * limit;
     const end = start + limit;
     const data = courses.slice(start, end);
@@ -124,8 +130,8 @@ export const handlers = [
     );
   }),
 
-  // Handles a POST create-student request
-  rest.post('/api/create-student', async (req, res, ctx) => { // 6
+  // Handles a POST student request
+  rest.post('/api/student', async (req, res, ctx) => { // 6
     const { firstName, lastName } = await req.json();
     if (firstName === 'errorTest') {
       return res(

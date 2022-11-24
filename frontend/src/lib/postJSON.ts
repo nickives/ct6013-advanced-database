@@ -1,4 +1,4 @@
-export default async function postJSON<T>(url: string, data: unknown): Promise<T> {
+export default async function postJSON<T>(url: string, data?: unknown): Promise<T> {
   return fetch(url, {
     method: 'POST',
     headers: {
