@@ -45,8 +45,11 @@ function useRESTSubmit<T, V>(url: string): RestSubmitHook<T, V> {
         },
         body: JSON.stringify(variables),
       });
+      if (!response.ok) {
+        throw new Error(response.statusText);
+      }
       const decoded: T & RESTError = await response.json();
-      if (!response.ok || decoded?.error) {
+      if (decoded?.error) {
         const message = decoded?.detail
           ? decoded.detail
           : decoded?.error
@@ -61,7 +64,7 @@ function useRESTSubmit<T, V>(url: string): RestSubmitHook<T, V> {
       }
     } catch (err) {
       setError({
-        message: err as string,
+        message: (err as any).message,
         statusCode: 0,
       });
       setData(undefined);
