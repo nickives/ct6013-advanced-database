@@ -1,33 +1,15 @@
 package uk.edu.glos.s1909632.ct6013.backend.services;
 
 import jakarta.ejb.EJB;
+import jakarta.ejb.Stateless;
 import jakarta.transaction.Transactional;
 import uk.edu.glos.s1909632.ct6013.backend.persistence.EntityFactory;
 import uk.edu.glos.s1909632.ct6013.backend.persistence.Lecturer;
-
-
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
-@jakarta.ejb.Stateless(name = "LecturerSessionEJB")
+@Stateless(name = "LecturerSessionEJB")
 public class LecturerSessionBean {
-
-    public static class LecturerREST {
-        public final String id;
-        public final String name;
-        public final String modules;
-
-        LecturerREST(Lecturer lecturer) {
-            id = lecturer.getId()
-                    .orElseThrow(() -> new IllegalStateException("Missing Lecturer ID"));
-            name = lecturer.getName();
-            modules = "/lecturer/" +
-                    id +
-                    "/modules";
-        }
-    }
 
     @EJB
     DbChoiceSessionBean dbChoice;
@@ -39,24 +21,19 @@ public class LecturerSessionBean {
         return dbChoice.getEntityFactory();
     }
 
-    public Optional<LecturerREST> getLecturer(String id) {
-        return getEntityFactory().getLecturer(id)
-                .map(LecturerREST::new);
+    public Optional<Lecturer> getLecturer(String id) {
+        return getEntityFactory().getLecturer(id);
     }
 
     @Transactional
-    public LecturerREST createLecturer(String name) {
+    public Lecturer createLecturer(String name) {
         Lecturer lecturer = getEntityFactory().createLecturer();
         lecturer.setName(name);
         lecturer.save();
-        return new LecturerREST(lecturer);
+        return lecturer;
     }
 
-    public List<LecturerREST> getAllLecturers() {
-        return Optional.of(getEntityFactory().getAllLecturers())
-                .map(l -> l.stream()
-                        .map(LecturerREST::new)
-                        .collect(Collectors.toList()))
-                .orElse(new ArrayList<>());
+    public List<Lecturer> getAllLecturers() {
+        return getEntityFactory().getAllLecturers();
     }
 }
