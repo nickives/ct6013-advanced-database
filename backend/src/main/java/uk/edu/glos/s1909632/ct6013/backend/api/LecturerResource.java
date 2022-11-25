@@ -1,6 +1,7 @@
 package uk.edu.glos.s1909632.ct6013.backend.api;
 
 import jakarta.ejb.EJB;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.*;
@@ -47,7 +48,8 @@ public class LecturerResource {
     }
 
     @POST
-    public Response createLecturer(LecturerInput lecturerInput, @Context UriInfo uriInfo) {
+    public Response createLecturer(@Valid LecturerInput lecturerInput,
+                                   @Context UriInfo uriInfo) {
         try {
             LecturerREST lecturer = new LecturerREST(
                     lecturerSessionBean.createLecturer(lecturerInput.name)

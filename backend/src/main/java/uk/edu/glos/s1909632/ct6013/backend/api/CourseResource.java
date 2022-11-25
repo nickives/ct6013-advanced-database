@@ -1,6 +1,7 @@
 package uk.edu.glos.s1909632.ct6013.backend.api;
 
 import jakarta.ejb.EJB;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.*;
@@ -60,7 +61,7 @@ public final class CourseResource {
     }
 
     @POST
-    public Response createCourse(CourseInput courseInput, @Context UriInfo uriInfo) {
+    public Response createCourse(@Valid CourseInput courseInput, @Context UriInfo uriInfo) {
         try {
             CourseREST course = new CourseREST(
                     courseSessionBean.createCourse(courseInput.name)
