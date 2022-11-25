@@ -4,6 +4,7 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Root;
+import uk.edu.glos.s1909632.ct6013.backend.persistence.oracle.ents.CourseEntity;
 import uk.edu.glos.s1909632.ct6013.backend.persistence.oracle.ents.LecturerEntity;
 import uk.edu.glos.s1909632.ct6013.backend.persistence.*;
 import uk.edu.glos.s1909632.ct6013.backend.persistence.Module;
@@ -61,17 +62,26 @@ public class OracleEntityFactory implements EntityFactory {
 
     @Override
     public Course createCourse() {
-        return null;
+        return new CourseOracle(em);
     }
 
     @Override
     public Optional<Course> getCourse(String id) {
-        return Optional.empty();
+        return Optional.ofNullable(em.find(CourseEntity.class, id))
+                .map(course -> new CourseOracle(course, em));
     }
 
     @Override
     public List<Course> getAllCourses() {
-        return null;
+        CriteriaBuilder builder = em.getCriteriaBuilder();
+        CriteriaQuery<CourseEntity> criteria = builder.createQuery(CourseEntity.class);
+        Root<CourseEntity> root = criteria.from(CourseEntity.class);
+        criteria.select(root);
+        return em.createQuery(criteria)
+                .getResultList()
+                .stream()
+                .map(course -> new CourseOracle(course, em))
+                .collect(Collectors.toList());
     }
 
     @Override

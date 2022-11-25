@@ -30,9 +30,9 @@
             <transaction-type>Container</transaction-type>
         </session>
         <session>
-            <ejb-name>JPAProviderEJB</ejb-name>
-            <ejb-class>uk.edu.glos.s1909632.ct6013.backend.services.JPAProviderBean</ejb-class>
-            <session-type>Singleton</session-type>
+            <ejb-name>CourseSessionEJB</ejb-name>
+            <ejb-class>uk.edu.glos.s1909632.ct6013.backend.services.CourseSessionBean</ejb-class>
+            <session-type>Stateless</session-type>
             <transaction-type>Container</transaction-type>
         </session>
     </enterprise-beans>
