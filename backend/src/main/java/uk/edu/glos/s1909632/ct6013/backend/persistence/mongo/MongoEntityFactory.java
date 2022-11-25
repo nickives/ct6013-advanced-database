@@ -5,12 +5,14 @@ import jakarta.ws.rs.NotFoundException;
 import org.bson.types.ObjectId;
 import uk.edu.glos.s1909632.ct6013.backend.persistence.*;
 import uk.edu.glos.s1909632.ct6013.backend.persistence.Module;
+import uk.edu.glos.s1909632.ct6013.backend.persistence.mongo.ents.CourseMongoEntity;
 import uk.edu.glos.s1909632.ct6013.backend.persistence.mongo.ents.LecturerMongoEntity;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import static uk.edu.glos.s1909632.ct6013.backend.persistence.mongo.MongoCollections.*;
 import static com.mongodb.client.model.Filters.eq;
 
 public class MongoEntityFactory implements EntityFactory {
@@ -34,7 +36,9 @@ public class MongoEntityFactory implements EntityFactory {
         } catch (IllegalArgumentException e) {
             throw new NotFoundException();
         }
-        LecturerMongoEntity lecturer = mongoDatabase.getCollection("lecturer", LecturerMongoEntity.class)
+        LecturerMongoEntity lecturer = mongoDatabase.getCollection(
+                LECTURER.toString(), LecturerMongoEntity.class
+                )
                 .find(eq("_id", objectId))
                 .first();
         return Optional.ofNullable(lecturer)
@@ -44,7 +48,7 @@ public class MongoEntityFactory implements EntityFactory {
 
     @Override
     public List<Lecturer> getAllLecturers() {
-        return mongoDatabase.getCollection("lecturer", LecturerMongoEntity.class)
+        return mongoDatabase.getCollection(LECTURER.toString(), LecturerMongoEntity.class)
                 .find()
                 .map(l -> new LecturerMongo(mongoDatabase, l))
                 .into(new ArrayList<>());
@@ -67,17 +71,36 @@ public class MongoEntityFactory implements EntityFactory {
 
     @Override
     public Course createCourse() {
-        return null;
+        return new CourseMongo(mongoDatabase);
     }
 
     @Override
     public Optional<Course> getCourse(String id) {
-        return Optional.empty();
+        ObjectId objectId;
+        try {
+            objectId = new ObjectId(id);
+        } catch (IllegalArgumentException e) {
+            throw new NotFoundException();
+        }
+        CourseMongoEntity course = mongoDatabase.getCollection(
+                COURSE.toString(),
+                CourseMongoEntity.class
+                )
+                .find(eq("_id", objectId))
+                .first();
+        return Optional.ofNullable(course)
+                .map(c -> new CourseMongo(mongoDatabase, c));
     }
 
     @Override
     public List<Course> getAllCourses() {
-        return null;
+        return mongoDatabase.getCollection(
+                COURSE.toString(),
+                CourseMongoEntity.class
+                )
+                .find()
+                .map(c -> new CourseMongo(mongoDatabase, c))
+                .into(new ArrayList<>());
     }
 
     @Override
