@@ -5,7 +5,7 @@ import jakarta.ejb.Stateless;
 import jakarta.transaction.Transactional;
 import uk.edu.glos.s1909632.ct6013.backend.persistence.Course;
 import uk.edu.glos.s1909632.ct6013.backend.persistence.EntityFactory;
-import uk.edu.glos.s1909632.ct6013.backend.persistence.exceptions.UniqueViolation;
+import uk.edu.glos.s1909632.ct6013.backend.exceptions.UniqueViolation;
 
 import java.util.List;
 import java.util.Optional;

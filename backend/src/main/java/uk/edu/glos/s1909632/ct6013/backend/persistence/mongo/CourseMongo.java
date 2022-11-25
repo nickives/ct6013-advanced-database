@@ -6,7 +6,7 @@ import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.result.InsertOneResult;
 import org.bson.types.ObjectId;
 import uk.edu.glos.s1909632.ct6013.backend.persistence.Course;
-import uk.edu.glos.s1909632.ct6013.backend.persistence.exceptions.UniqueViolation;
+import uk.edu.glos.s1909632.ct6013.backend.exceptions.UniqueViolation;
 import uk.edu.glos.s1909632.ct6013.backend.persistence.mongo.ents.CourseMongoEntity;
 
 import java.util.Objects;
@@ -67,7 +67,9 @@ public class CourseMongo implements Course {
             if (e.getCode() == 11000) {
                 Pattern nameText = Pattern.compile("name_text");
                 if (nameText.matcher(e.getError().getMessage()).find()) {
-                    throw new UniqueViolation("name");
+                    throw new UniqueViolation(
+                            "name",
+                            "Course name already exists");
                 }
             }
         }

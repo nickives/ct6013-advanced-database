@@ -4,7 +4,7 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceException;
 import org.hibernate.exception.ConstraintViolationException;
 import uk.edu.glos.s1909632.ct6013.backend.persistence.Course;
-import uk.edu.glos.s1909632.ct6013.backend.persistence.exceptions.UniqueViolation;
+import uk.edu.glos.s1909632.ct6013.backend.exceptions.UniqueViolation;
 import uk.edu.glos.s1909632.ct6013.backend.persistence.oracle.ents.CourseEntity;
 
 import java.util.Optional;
@@ -54,8 +54,8 @@ public class CourseOracle implements Course {
                 // UNIQUE constraint violation
                 if ("23000".equals(cve.getSQLState())) {
                     throw new UniqueViolation(
-                            cve.getCause(),
-                            "name"
+                            "name",
+                            "Course name already exists"
                     );
                 }
             }

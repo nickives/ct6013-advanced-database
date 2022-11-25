@@ -6,7 +6,7 @@ import jakarta.validation.constraints.NotEmpty;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.*;
 import uk.edu.glos.s1909632.ct6013.backend.persistence.Course;
-import uk.edu.glos.s1909632.ct6013.backend.persistence.exceptions.UniqueViolation;
+import uk.edu.glos.s1909632.ct6013.backend.exceptions.UniqueViolation;
 import uk.edu.glos.s1909632.ct6013.backend.services.CourseSessionBean;
 
 import java.util.List;
@@ -73,8 +73,10 @@ public final class CourseResource {
                     .build();
         } catch (UniqueViolation e) {
             RESTError error = new RESTError(
+                    "https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/409",
                     e.getMessage(),
                     Response.Status.CONFLICT.getStatusCode(),
+                    "Field value must be unique",
                     e.getPropertyName()
             );
             return Response.status(Response.Status.CONFLICT)
