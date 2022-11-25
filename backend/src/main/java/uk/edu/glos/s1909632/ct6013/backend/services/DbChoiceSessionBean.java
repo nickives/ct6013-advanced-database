@@ -1,5 +1,6 @@
 package uk.edu.glos.s1909632.ct6013.backend.services;
 
+import jakarta.annotation.PreDestroy;
 import jakarta.ejb.EJB;
 import jakarta.ejb.Stateless;
 import jakarta.persistence.EntityManager;
@@ -45,5 +46,10 @@ public class DbChoiceSessionBean {
             return new MongoEntityFactory(mongoClientProvider.getDatabase());
         }
         return new OracleEntityFactory(em);
+    }
+
+    @PreDestroy
+    public void closeDb() {
+        em.close();
     }
 }
