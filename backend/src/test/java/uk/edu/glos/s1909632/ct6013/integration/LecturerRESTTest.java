@@ -68,6 +68,7 @@ public class LecturerRESTTest extends BaseIntegrationTest {
                     when().
                             post(postUrl).
                     then().
+                            statusCode(201).
                             body("name", equalTo(l.get("name"))).
                     extract().
                             response();
@@ -122,7 +123,7 @@ public class LecturerRESTTest extends BaseIntegrationTest {
 
         String body = response.getBody().asString();
         JsonPath jsonPath = new JsonPath(body);
-        List<HashMap<String, String>> results = jsonPath.getList("$");
-        assertThat(results).allSatisfy(result -> assertThat(lecturers).contains(result));
+        List<Map<String, String>> results = jsonPath.getList("$");
+        assertThat(results).containsAll(lecturers);
     }
 }
