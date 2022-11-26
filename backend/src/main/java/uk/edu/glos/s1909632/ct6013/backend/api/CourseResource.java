@@ -15,7 +15,7 @@ import java.util.stream.Collectors;
 @Path("/course")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
-public final class CourseResource {
+public class CourseResource {
     public static final class CourseREST {
         public final String id;
         public final String name;
