@@ -1,6 +1,6 @@
 package uk.edu.glos.s1909632.ct6013.backend.persistence;
 
-import uk.edu.glos.s1909632.ct6013.backend.persistence.exceptions.UniqueViolation;
+import uk.edu.glos.s1909632.ct6013.backend.exceptions.UniqueViolation;
 
 import java.util.Optional;
 

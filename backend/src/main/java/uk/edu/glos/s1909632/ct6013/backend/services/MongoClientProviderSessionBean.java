@@ -40,7 +40,7 @@ public class MongoClientProviderSessionBean {
         MongoCollection<CourseMongoEntity> collection = getDatabase().getCollection(
                 MongoCollections.COURSE.toString(), CourseMongoEntity.class);
         IndexOptions indexOptions = new IndexOptions().unique(true);
-        collection.createIndex(Indexes.text("name"), indexOptions);
+        collection.createIndex(Indexes.ascending("name"), indexOptions);
     }
 
     private void createSchema() {
