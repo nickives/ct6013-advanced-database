@@ -35,5 +35,11 @@
             <session-type>Stateless</session-type>
             <transaction-type>Container</transaction-type>
         </session>
+        <session>
+            <ejb-name>ModuleSessionEJB</ejb-name>
+            <ejb-class>uk.edu.glos.s1909632.ct6013.backend.services.ModuleSessionBean</ejb-class>
+            <session-type>Stateless</session-type>
+            <transaction-type>Container</transaction-type>
+        </session>
     </enterprise-beans>
 </ejb-jar>

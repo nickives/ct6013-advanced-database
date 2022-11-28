@@ -7,28 +7,37 @@ import com.mongodb.client.result.InsertOneResult;
 import org.bson.types.ObjectId;
 import uk.edu.glos.s1909632.ct6013.backend.persistence.Course;
 import uk.edu.glos.s1909632.ct6013.backend.exceptions.UniqueViolation;
-import uk.edu.glos.s1909632.ct6013.backend.persistence.mongo.ents.CourseMongoEntity;
+import uk.edu.glos.s1909632.ct6013.backend.persistence.Module;
+import uk.edu.glos.s1909632.ct6013.backend.persistence.mongo.documents.CourseDocument;
 
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
-import static com.mongodb.client.model.Filters.and;
-import static com.mongodb.client.model.Filters.eq;
+import static com.mongodb.client.model.Filters.*;
 
 public class CourseMongo implements Course {
-    private final MongoCollection<CourseMongoEntity> courseCollection;
-    private final CourseMongoEntity course;
+    private final MongoEntityFactory ef;
+    private final MongoDatabase mongoDatabase;
+    private final MongoCollection<CourseDocument> courseCollection;
+    private final CourseDocument course;
 
     public CourseMongo(MongoDatabase mongoDatabase,
-                       CourseMongoEntity course) {
-        this.courseCollection = mongoDatabase.getCollection("course", CourseMongoEntity.class);
+                       CourseDocument course,
+                       MongoEntityFactory ef) {
+        this.courseCollection = mongoDatabase.getCollection("course", CourseDocument.class);
         this.course = course;
+        this.mongoDatabase = mongoDatabase;
+        this.ef = ef;
     }
 
-    public CourseMongo(MongoDatabase mongoDatabase) {
-        this.courseCollection = mongoDatabase.getCollection("course", CourseMongoEntity.class);
-        this.course = new CourseMongoEntity();
+    public CourseMongo(MongoDatabase mongoDatabase, MongoEntityFactory ef) {
+        this.courseCollection = mongoDatabase.getCollection("course", CourseDocument.class);
+        this.course = new CourseDocument();
+        this.mongoDatabase = mongoDatabase;
+        this.ef = ef;
     }
 
 
@@ -52,7 +61,7 @@ public class CourseMongo implements Course {
         try {
             if (getId().isPresent()) {
                 courseCollection.findOneAndReplace(
-                        and(eq("_id", getId())),
+                        and(eq("_id", course.getId())),
                         course
                 );
             } else {
@@ -73,5 +82,27 @@ public class CourseMongo implements Course {
                 }
             }
         }
+    }
+
+    @Override
+    public Set<Module> getModules() {
+        return course.getModules()
+                .stream()
+                .map(m -> new ModuleMongo(m, this, mongoDatabase))
+                .collect(Collectors.toSet());
+    }
+
+    @Override
+    public void addModule(Module module) {
+        try {
+            ModuleMongo moduleMongo = (ModuleMongo) module;
+            course.getModules().add(moduleMongo.getEntity());
+        } catch (ClassCastException e) {
+            throw new IllegalStateException("ModuleMongo expected", e);
+        }
+    }
+
+    CourseDocument getCourseDocument() {
+        return course;
     }
 }

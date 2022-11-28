@@ -29,7 +29,7 @@ public class LecturerRESTTest extends BaseIntegrationTest {
 
     @BeforeAll
     static public void setAppUrl() throws MalformedURLException {
-        appUrl = new URL(baseAppUrl + "lecturer");
+        appUrl = new URL(baseAppUrl + "/lecturer");
     }
 
     @BeforeAll
@@ -77,7 +77,8 @@ public class LecturerRESTTest extends BaseIntegrationTest {
             String id = jsonPath.getString("id");
             l.put("id", id);
             // future responses will have this
-            l.put("modules", "/lecturer/" + id + "/modules");
+            String modules = jsonPath.getString("modules");
+            l.put("modules", modules);
         });
     }
 

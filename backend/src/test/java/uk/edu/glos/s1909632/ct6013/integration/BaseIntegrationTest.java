@@ -69,7 +69,7 @@ public class BaseIntegrationTest {
                 .waitingFor(Wait.forLogMessage(".* app was successfully deployed .*\\s", 1));
         appContainer.start();
         baseAppUrl = new URL(String.format(
-                "http://%s:%s/app/api/",
+                "http://%s:%s/app/api",
                 appContainer.getHost(), appContainer.getMappedPort(8080)
         ));
     }

@@ -51,13 +51,11 @@ public class LecturerOracle implements Lecturer {
     }
 
     @Override
-    @Transactional
-    public void setModules(Set<Module> modules) {
-
-    }
-
-    @Override
     public Set<Module> getModules() {
         return null;
+    }
+
+    protected LecturerEntity getEntity() {
+        return lecturer;
     }
 }

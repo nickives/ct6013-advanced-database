@@ -31,11 +31,9 @@ public class ModuleEntity {
     @JoinColumn(name = "LECTURER_ID", nullable = false)
     private LecturerEntity lecturer;
 
-    @ManyToMany
-    @JoinTable(name = "COURSE_MODULE",
-            joinColumns = @JoinColumn(name = "MODULE_ID"),
-            inverseJoinColumns = @JoinColumn(name = "COURSE_ID"))
-    private Set<CourseEntity> courses = new LinkedHashSet<>();
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "COURSE_ID", nullable = false)
+    private CourseEntity course;
 
     @OneToMany(mappedBy = "module")
     private Set<StudentModuleEntity> studentModules = new LinkedHashSet<>();
@@ -88,12 +86,12 @@ public class ModuleEntity {
         this.lecturer = lecturer;
     }
 
-    public Set<CourseEntity> getCourses() {
-        return courses;
+    public CourseEntity getCourse() {
+        return course;
     }
 
-    public void setCourses(Set<CourseEntity> courses) {
-        this.courses = courses;
+    public void setCourse(CourseEntity course) {
+        this.course = course;
     }
 
     public Set<StudentModuleEntity> getStudentModules() {

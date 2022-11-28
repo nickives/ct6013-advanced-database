@@ -12,8 +12,8 @@ import org.bson.codecs.configuration.CodecProvider;
 import org.bson.codecs.configuration.CodecRegistry;
 import org.bson.codecs.pojo.PojoCodecProvider;
 import uk.edu.glos.s1909632.ct6013.backend.persistence.mongo.MongoCollections;
-import uk.edu.glos.s1909632.ct6013.backend.persistence.mongo.ents.CourseMongoEntity;
-import uk.edu.glos.s1909632.ct6013.backend.persistence.mongo.ents.LecturerMongoEntity;
+import uk.edu.glos.s1909632.ct6013.backend.persistence.mongo.documents.CourseDocument;
+import uk.edu.glos.s1909632.ct6013.backend.persistence.mongo.documents.LecturerDocument;
 
 import static com.mongodb.MongoClientSettings.getDefaultCodecRegistry;
 import static org.bson.codecs.configuration.CodecRegistries.fromProviders;
@@ -37,8 +37,8 @@ public class MongoClientProviderSessionBean {
     }
 
     private void createCourseSchema() {
-        MongoCollection<CourseMongoEntity> collection = getDatabase().getCollection(
-                MongoCollections.COURSE.toString(), CourseMongoEntity.class);
+        MongoCollection<CourseDocument> collection = getDatabase().getCollection(
+                MongoCollections.COURSE.toString(), CourseDocument.class);
         IndexOptions indexOptions = new IndexOptions().unique(true);
         collection.createIndex(Indexes.ascending("name"), indexOptions);
     }
@@ -46,7 +46,7 @@ public class MongoClientProviderSessionBean {
     private void createSchema() {
         createCourseSchema();
         getDatabase().getCollection(MongoCollections.LECTURER.toString(),
-                                    LecturerMongoEntity.class);
+                                    LecturerDocument.class);
         getDatabase().getCollection(MongoCollections.STUDENT.toString());
     }
 

@@ -1,13 +1,17 @@
 package uk.edu.glos.s1909632.ct6013.backend.persistence.oracle;
 
 import jakarta.persistence.EntityManager;
+import jakarta.persistence.NoResultException;
+import jakarta.persistence.TypedQuery;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Root;
+import jakarta.ws.rs.NotFoundException;
 import uk.edu.glos.s1909632.ct6013.backend.persistence.oracle.ents.CourseEntity;
 import uk.edu.glos.s1909632.ct6013.backend.persistence.oracle.ents.LecturerEntity;
 import uk.edu.glos.s1909632.ct6013.backend.persistence.*;
 import uk.edu.glos.s1909632.ct6013.backend.persistence.Module;
+import uk.edu.glos.s1909632.ct6013.backend.persistence.oracle.ents.ModuleEntity;
 
 import java.util.List;
 import java.util.Optional;
@@ -46,18 +50,38 @@ public class OracleEntityFactory implements EntityFactory {
     }
 
     @Override
-    public Module createModule() {
-        return null;
+    public Module createModule(Course course) {
+        Module module = new ModuleOracle(em);
+        module.setCourse(course);
+        return module;
     }
 
     @Override
-    public Optional<Module> getModule(String id) {
-        return Optional.empty();
+    public Optional<Module> getModule(String moduleId, String courseId) {
+        TypedQuery<ModuleEntity> query = em.createQuery(
+                "SELECT m FROM ModuleEntity m WHERE m.id = :moduleId AND m.course.id = :courseId",
+                ModuleEntity.class
+        )
+                .setParameter("moduleId", moduleId)
+                .setParameter("courseId", courseId);
+        try {
+            return Optional.of(query.getSingleResult())
+                    .map(m -> new ModuleOracle(m, em));
+        } catch (NoResultException e) {
+            throw new NotFoundException(e);
+        }
     }
 
     @Override
     public List<Module> getModules(String courseId) {
-        return null;
+        TypedQuery<ModuleEntity> query = em.createQuery(
+                        "SELECT m FROM ModuleEntity m WHERE m.course.id = :courseId",
+                        ModuleEntity.class)
+                .setParameter("courseId", courseId);
+        return query.getResultList()
+                .stream()
+                .map(m -> new ModuleOracle(m, em))
+                .collect(Collectors.toList());
     }
 
     @Override
@@ -81,7 +105,7 @@ public class OracleEntityFactory implements EntityFactory {
                 .getResultList()
                 .stream()
                 .map(course -> new CourseOracle(course, em))
-                .collect(Collectors.toList());
+                .collect(Collectors.toUnmodifiableList());
     }
 
     @Override

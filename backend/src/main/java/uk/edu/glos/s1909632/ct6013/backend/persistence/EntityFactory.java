@@ -9,8 +9,9 @@ public interface EntityFactory {
     Optional<Lecturer> getLecturer(String id);
     List<Lecturer> getAllLecturers();
 
-    Module createModule();
-    Optional<Module> getModule(String id);
+    Module createModule(Course course);
+    Optional<Module> getModule(String moduleId, String courseId);
+
     List<Module> getModules(String courseId);
 
     Course createCourse();

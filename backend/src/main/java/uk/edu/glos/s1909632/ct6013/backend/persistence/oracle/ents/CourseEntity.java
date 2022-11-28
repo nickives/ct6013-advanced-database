@@ -26,10 +26,7 @@ public class CourseEntity {
             inverseJoinColumns = @JoinColumn(name = "STUDENT_ID"))
     private Set<StudentEntity> students = new LinkedHashSet<>();
 
-    @ManyToMany
-    @JoinTable(name = "COURSE_MODULE",
-            joinColumns = @JoinColumn(name = "COURSE_ID"),
-            inverseJoinColumns = @JoinColumn(name = "MODULE_ID"))
+    @OneToMany(mappedBy = "course")
     private Set<ModuleEntity> modules = new LinkedHashSet<>();
 
     public Long getId() {

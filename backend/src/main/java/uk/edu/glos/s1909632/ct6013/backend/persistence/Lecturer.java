@@ -8,6 +8,5 @@ public interface Lecturer {
     Optional<String> getId();
     void setName(String name);
     String getName();
-    void setModules(Set<Module> modules);
     Set<Module> getModules();
 }

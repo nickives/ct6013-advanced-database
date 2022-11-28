@@ -6,38 +6,37 @@ import com.mongodb.client.result.InsertOneResult;
 import org.bson.types.ObjectId;
 import uk.edu.glos.s1909632.ct6013.backend.persistence.Lecturer;
 import uk.edu.glos.s1909632.ct6013.backend.persistence.Module;
-import uk.edu.glos.s1909632.ct6013.backend.persistence.mongo.ents.LecturerMongoEntity;
+import uk.edu.glos.s1909632.ct6013.backend.persistence.mongo.documents.LecturerDocument;
 
-import java.util.Objects;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 
-import static com.mongodb.client.model.Filters.and;
-import static com.mongodb.client.model.Filters.eq;
+import static com.mongodb.client.model.Filters.*;
 
 public class LecturerMongo implements Lecturer {
-
-    private final MongoCollection<LecturerMongoEntity> lecturerCollection;
-    private final LecturerMongoEntity lecturer;
+    private final MongoDatabase mongoDatabase;
+    private final MongoCollection<LecturerDocument> lecturerCollection;
+    private final LecturerDocument lecturer;
 
     protected LecturerMongo(
             MongoDatabase mongoDatabase,
-            LecturerMongoEntity lecturerMongoEntity
+            LecturerDocument lecturerDocument
     ) {
-        this.lecturerCollection = mongoDatabase.getCollection("lecturer", LecturerMongoEntity.class);
-        this.lecturer = lecturerMongoEntity;
+        this.lecturerCollection = mongoDatabase.getCollection("lecturer", LecturerDocument.class);
+        this.lecturer = lecturerDocument;
+        this.mongoDatabase = mongoDatabase;
     }
 
     protected LecturerMongo(MongoDatabase mongoDatabase) {
-        this.lecturerCollection = mongoDatabase.getCollection("lecturer", LecturerMongoEntity.class);
-        this.lecturer = new LecturerMongoEntity();
+        this.lecturerCollection = mongoDatabase.getCollection("lecturer", LecturerDocument.class);
+        this.lecturer = new LecturerDocument();
+        this.mongoDatabase = mongoDatabase;
     }
 
     @Override
     public void save() {
         if (getId().isPresent()) {
             lecturerCollection.findOneAndReplace(
-                    and(eq("id", getId())),
+                    and(eq("_id", getId())),
                     lecturer
             );
         } else {
@@ -66,12 +65,14 @@ public class LecturerMongo implements Lecturer {
     }
 
     @Override
-    public void setModules(Set<Module> modules) {
-//        lecturer.setModules(modules);
+    public Set<Module> getModules() {
+//        MongoCollection<CourseDocument> courseCollection = mongoDatabase.getCollection(
+//                MongoCollections.COURSE.toString(), CourseDocument.class);
+//        List<CourseDocument.CourseModuleMongoEntity> moduleDocuments = courseCollection.
+        return null;
     }
 
-    @Override
-    public Set<Module> getModules() {
-        return null;
+    LecturerDocument getDocument() {
+        return lecturer;
     }
 }
