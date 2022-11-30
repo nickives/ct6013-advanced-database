@@ -10,7 +10,6 @@ import * as yup from 'yup';
 // APP
 import useRESTSubmit from 'hooks/rest-submit';
 import { Lecturer, Course } from 'types';
-import postJSON from 'lib/postJSON';
 import getJSON from 'lib/getJSON';
 
 interface FormData {
@@ -21,6 +20,8 @@ interface FormData {
   catPoints: number;
   semester: string;
 }
+
+type SubmitData = Omit<FormData, 'courseId'>;
 
 interface ResultData {
   id: string;
@@ -56,13 +57,17 @@ const CreateModule = () => {
   const {
     control, handleSubmit, getValues, formState: { errors },
   } = useForm<FormData>({ resolver: yupResolver(schema) });
-  const [loading, error, data, submitFn] = useRESTSubmit<ResultData, FormData>('/api/module');
+  const [loading, error, data, submitFn] = useRESTSubmit<ResultData, SubmitData>();
   const { lecturers, courses } = useLoaderData() as CreateModuleData;
 
   return (
     <Box
       component="form"
-      onSubmit={ handleSubmit(() => submitFn(getValues())) }
+      onSubmit={ handleSubmit(() => {
+        const values = getValues();
+        const { courseId: _, ...submitValues } = values;
+        return submitFn(submitValues, `/api/course/${values.courseId}/modules`);
+      }) }
       sx={ {
         display: 'flex',
         flexDirection: 'column',
@@ -192,6 +197,7 @@ const CreateModule = () => {
                 <TextField
                   // eslint-disable-next-line react/jsx-props-no-spreading
                   { ...field }
+                  onChange={ (event) => field.onChange(+event.target.value) }
                   variant="filled"
                   label="CAT Points"
                   inputProps={ { inputMode: 'numeric', pattern: '[0-9]*' } }

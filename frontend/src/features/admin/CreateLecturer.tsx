@@ -26,12 +26,12 @@ const CreateLecturer = () => {
   const {
     control, handleSubmit, getValues, formState: { errors },
   } = useForm<FormData>({ resolver: yupResolver(schema) });
-  const [loading, error, data, submitFn] = useRESTSubmit<ResultData, FormData>('/api/lecturer');
+  const [loading, error, data, submitFn] = useRESTSubmit<ResultData, FormData>();
 
   return (
     <Box
       component="form"
-      onSubmit={ handleSubmit(() => submitFn(getValues())) }
+      onSubmit={ handleSubmit(() => submitFn(getValues(), '/api/lecturer')) }
       sx={ {
         display: 'flex',
         flexDirection: 'column',

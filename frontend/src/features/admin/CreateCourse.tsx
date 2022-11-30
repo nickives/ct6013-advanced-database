@@ -22,12 +22,12 @@ const CreateCourse = () => {
   const {
     control, handleSubmit, getValues, formState: { errors },
   } = useForm<FormData>({ resolver: yupResolver(schema) });
-  const [loading, error, data, submitFn] = useRESTSubmit<ResultData, FormData>('/api/course');
+  const [loading, error, data, submitFn] = useRESTSubmit<ResultData, FormData>();
 
   return (
     <Box
       component="form"
-      onSubmit={ handleSubmit(() => submitFn(getValues())) }
+      onSubmit={ handleSubmit(() => submitFn(getValues(), '/api/course')) }
       sx={ {
         display: 'flex',
         flexDirection: 'column',

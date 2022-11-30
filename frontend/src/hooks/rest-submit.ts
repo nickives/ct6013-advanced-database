@@ -14,7 +14,7 @@ type RestSubmitHook<T, V> = [
   loading: boolean,
   error: ErrorReturn | undefined,
   data: T | undefined,
-  submitFn: (variables: V) => void
+  submitFn: (variables: V, path: string) => void
 ];
 
 /**
@@ -22,15 +22,14 @@ type RestSubmitHook<T, V> = [
  *
  * @template T Type for data object
  * @template V Values for submit function
- * @param url Endpoint for POST request
  * @returns loading, error, data, submitFn
  */
-function useRESTSubmit<T, V>(url: string): RestSubmitHook<T, V> {
+function useRESTSubmit<T, V>(): RestSubmitHook<T, V> {
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<ErrorReturn | undefined>(undefined);
   const [data, setData] = useState<T | undefined>(undefined);
 
-  async function submitFn(variables: V) {
+  async function submitFn(variables: V, url: string) {
     setLoading(true);
     setData(undefined);
     setError(undefined);

@@ -94,9 +94,9 @@ export const handlers = [
   }),
 
   // Handles a POST module request
-  rest.post('/api/module', async (req, res, ctx) => { // 4
+  rest.post('/api/:courseId/module', async (req, res, ctx) => { // 4
     const { name }: {
-      name: string; courseId: string; lecturerId: string;
+      name: string; lecturerId: string;
     } = await req.json();
     if (name === 'errorTest') {
       return res(
