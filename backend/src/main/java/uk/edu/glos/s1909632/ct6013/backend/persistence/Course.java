@@ -10,6 +10,6 @@ public interface Course {
     String getName();
     void setName(String name);
     Set<Module> getModules();
-    void addModule(Module module);
     void save() throws UniqueViolation;
+    void addStudent(Student student);
 }

@@ -4,12 +4,11 @@ import jakarta.persistence.*;
 import org.hibernate.annotations.Nationalized;
 
 import java.util.LinkedHashSet;
+import java.util.Objects;
 import java.util.Set;
 
 @Entity
-@Table(name = "STUDENT", indexes = {
-        @Index(name = "STUDENT_STUDENT_NUMBER_uindex", columnList = "STUDENT_NUMBER", unique = true)
-})
+@Table(name = "STUDENT")
 public class StudentEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -23,10 +22,6 @@ public class StudentEntity {
     @Nationalized
     @Column(name = "LAST_NAME", nullable = false, length = 20)
     private String lastName;
-
-    @Nationalized
-    @Column(name = "STUDENT_NUMBER", nullable = false, length = 20)
-    private String studentNumber;
 
     @ManyToMany
     @JoinTable(name = "STUDENT_COURSE",
@@ -61,14 +56,6 @@ public class StudentEntity {
         this.lastName = lastName;
     }
 
-    public String getStudentNumber() {
-        return studentNumber;
-    }
-
-    public void setStudentNumber(String studentNumber) {
-        this.studentNumber = studentNumber;
-    }
-
     public Set<CourseEntity> getCourses() {
         return courses;
     }
@@ -85,4 +72,16 @@ public class StudentEntity {
         this.studentModules = studentModules;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        StudentEntity that = (StudentEntity) o;
+        return Objects.equals(getId(), that.getId());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getId());
+    }
 }

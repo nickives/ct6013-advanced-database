@@ -4,9 +4,10 @@ import org.bson.codecs.pojo.annotations.BsonId;
 import org.bson.codecs.pojo.annotations.BsonProperty;
 import org.bson.types.ObjectId;
 
-import java.util.*;
+import java.util.Objects;
+import java.util.Optional;
 
-final public class CourseDocument {
+final public class ModuleDocument {
     @BsonId
     private ObjectId id;
 
@@ -14,12 +15,19 @@ final public class CourseDocument {
     private String name;
 
     @BsonProperty
-    private Set<ObjectId> studentIds;
+    private String code;
 
     @BsonProperty
-    private Set<ModuleDocument> modules;
+    private String semester;
 
-    public CourseDocument() {}
+    @BsonProperty
+    private Long catPoints;
+
+    @BsonProperty
+    private LecturerDocument lecturer;
+
+    public ModuleDocument() {
+    }
 
     public ObjectId getId() {
         return id;
@@ -37,26 +45,43 @@ final public class CourseDocument {
         this.name = name;
     }
 
-    public Set<ObjectId> getStudentIds() {
-        if (studentIds == null) studentIds = new HashSet<>();
-        return studentIds;
+    public String getCode() {
+        return code;
     }
 
-    public Set<ModuleDocument> getModules() {
-        if (modules == null) modules = new HashSet<>();
-        return modules;
+    public void setCode(String code) {
+        this.code = code;
     }
 
-    public void setModules(
-            Set<ModuleDocument> modules) {
-        this.modules = modules;
+    public String getSemester() {
+        return semester;
+    }
+
+    public void setSemester(String semester) {
+        this.semester = semester;
+    }
+
+    public Long getCatPoints() {
+        return catPoints;
+    }
+
+    public void setCatPoints(Long catPoints) {
+        this.catPoints = catPoints;
+    }
+
+    public LecturerDocument getLecturer() {
+        return lecturer;
+    }
+
+    public void setLecturer(LecturerDocument lecturer) {
+        this.lecturer = lecturer;
     }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        CourseDocument that = (CourseDocument) o;
+        ModuleDocument that = (ModuleDocument) o;
         return Objects.equals(getId(), that.getId());
     }
 

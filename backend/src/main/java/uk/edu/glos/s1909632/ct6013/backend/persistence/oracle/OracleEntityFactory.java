@@ -7,11 +7,9 @@ import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Root;
 import jakarta.ws.rs.NotFoundException;
-import uk.edu.glos.s1909632.ct6013.backend.persistence.oracle.ents.CourseEntity;
-import uk.edu.glos.s1909632.ct6013.backend.persistence.oracle.ents.LecturerEntity;
+import uk.edu.glos.s1909632.ct6013.backend.persistence.oracle.ents.*;
 import uk.edu.glos.s1909632.ct6013.backend.persistence.*;
 import uk.edu.glos.s1909632.ct6013.backend.persistence.Module;
-import uk.edu.glos.s1909632.ct6013.backend.persistence.oracle.ents.ModuleEntity;
 
 import java.util.List;
 import java.util.Optional;
@@ -51,13 +49,13 @@ public class OracleEntityFactory implements EntityFactory {
 
     @Override
     public Module createModule(Course course) {
-        Module module = new ModuleOracle(em);
+        ModuleOracle module = new ModuleOracle(em);
         module.setCourse(course);
         return module;
     }
 
     @Override
-    public Optional<Module> getModule(String moduleId, String courseId) {
+    public Optional<Module> getModuleFromCourse(String moduleId, String courseId) {
         TypedQuery<ModuleEntity> query = em.createQuery(
                 "SELECT m FROM ModuleEntity m WHERE m.id = :moduleId AND m.course.id = :courseId",
                 ModuleEntity.class
@@ -73,7 +71,24 @@ public class OracleEntityFactory implements EntityFactory {
     }
 
     @Override
-    public List<Module> getModules(String courseId) {
+    public List<Module> getModulesFromCourse(List<String> moduleIds, String courseId) {
+        List<Long> longModuleIds = moduleIds.stream()
+                .map(Long::parseLong)
+                .collect(Collectors.toUnmodifiableList());
+        TypedQuery<ModuleEntity> query = em.createQuery(
+                        "SELECT m FROM ModuleEntity m WHERE m.id IN :moduleIds AND m.course.id = :courseId",
+                        ModuleEntity.class
+                )
+                .setParameter("moduleIds", longModuleIds)
+                .setParameter("courseId", courseId);
+        return query.getResultList()
+                .stream()
+                .map(m -> new ModuleOracle(m, em))
+                .collect(Collectors.toUnmodifiableList());
+    }
+
+    @Override
+    public List<Module> getAllCourseModules(String courseId) {
         TypedQuery<ModuleEntity> query = em.createQuery(
                         "SELECT m FROM ModuleEntity m WHERE m.course.id = :courseId",
                         ModuleEntity.class)
@@ -81,7 +96,36 @@ public class OracleEntityFactory implements EntityFactory {
         return query.getResultList()
                 .stream()
                 .map(m -> new ModuleOracle(m, em))
-                .collect(Collectors.toList());
+                .collect(Collectors.toUnmodifiableList());
+    }
+
+    @Override
+    public List<StudentModule> getAllStudentModules(String studentId) {
+        return em.createQuery(
+                "SELECT m FROM StudentModuleEntity m WHERE m.id.studentId = :studentId",
+                StudentModuleEntity.class)
+                .setParameter("studentId", studentId)
+                .getResultList()
+                .stream()
+                .map(m -> new StudentModuleOracle(m, em))
+                .collect(Collectors.toUnmodifiableList());
+    }
+
+    @Override
+    public Optional<StudentModule> getStudentModule(String studentId, String moduleId) {
+        TypedQuery<StudentModuleEntity> query = em.createQuery(
+                "SELECT m FROM StudentModuleEntity m " +
+                        "WHERE m.id.moduleId = :moduleId AND m.id.studentId = :studentId",
+                StudentModuleEntity.class)
+                .setParameter("studentId", studentId)
+                .setParameter("moduleId", moduleId);
+
+        try {
+            return Optional.of(query.getSingleResult())
+                    .map(m -> new StudentModuleOracle(m, em));
+        } catch (NoResultException e) {
+            return Optional.empty();
+        }
     }
 
     @Override
@@ -110,16 +154,25 @@ public class OracleEntityFactory implements EntityFactory {
 
     @Override
     public Student createStudent() {
-        return null;
+        return new StudentOracle(em);
     }
 
     @Override
     public Optional<Student> getStudent(String id) {
-        return Optional.empty();
+        return Optional.ofNullable(em.find(StudentEntity.class, id))
+                .map(s -> new StudentOracle(s, em));
     }
 
     @Override
     public List<Student> getAllStudents() {
-        return null;
+        CriteriaBuilder builder = em.getCriteriaBuilder();
+        CriteriaQuery<StudentEntity> criteria = builder.createQuery(StudentEntity.class);
+        Root<StudentEntity> root = criteria.from(StudentEntity.class);
+        criteria.select(root);
+        return em.createQuery(criteria)
+                .getResultList()
+                .stream()
+                .map(student -> new StudentOracle(student, em))
+                .collect(Collectors.toUnmodifiableList());
     }
 }

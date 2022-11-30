@@ -28,7 +28,7 @@ public class ModuleSessionBean {
     }
 
     public Optional<Module> getModule(String courseId, String moduleId ) {
-        return getEntityFactory().getModule(moduleId, courseId);
+        return getEntityFactory().getModuleFromCourse(moduleId, courseId);
     }
 
     @Transactional
@@ -61,6 +61,6 @@ public class ModuleSessionBean {
     }
 
     public List<Module> getAllModules(String courseId) {
-        return getEntityFactory().getModules(courseId);
+        return getEntityFactory().getAllCourseModules(courseId);
     }
 }

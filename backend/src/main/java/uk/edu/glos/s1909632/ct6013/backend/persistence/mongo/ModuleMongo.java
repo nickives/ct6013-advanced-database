@@ -1,42 +1,47 @@
 package uk.edu.glos.s1909632.ct6013.backend.persistence.mongo;
+
+import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
+import com.mongodb.client.model.Filters;
+import com.mongodb.client.model.Updates;
+import org.bson.conversions.Bson;
 import org.bson.types.ObjectId;
 import uk.edu.glos.s1909632.ct6013.backend.exceptions.UniqueViolation;
-import uk.edu.glos.s1909632.ct6013.backend.persistence.Course;
 import uk.edu.glos.s1909632.ct6013.backend.persistence.Lecturer;
 import uk.edu.glos.s1909632.ct6013.backend.persistence.Module;
+import uk.edu.glos.s1909632.ct6013.backend.persistence.Student;
 import uk.edu.glos.s1909632.ct6013.backend.persistence.mongo.documents.CourseDocument;
-
+import uk.edu.glos.s1909632.ct6013.backend.persistence.mongo.documents.ModuleDocument;
 import java.util.Optional;
-
+import java.util.Set;
 
 public class ModuleMongo implements Module {
     private final MongoDatabase mongoDatabase;
-    private final CourseDocument.CourseModuleMongoEntity module;
-    private CourseMongo course;
+    private final ModuleDocument module;
+    private final ObjectId courseId;
 
     /***
      * ModuleMongo - Construct from module retrieved from db
      * @param module Module document from db
-     * @param course Course
      * @param mongoDatabase Database connection
      */
-    public ModuleMongo(CourseDocument.CourseModuleMongoEntity module, CourseMongo course,
-                       MongoDatabase mongoDatabase
-    ) {
+    public ModuleMongo(ModuleDocument module,
+                       MongoDatabase mongoDatabase,
+                       ObjectId courseId) {
         this.module = module;
-        this.course = course;
         this.mongoDatabase = mongoDatabase;
+        this.courseId = courseId;
     }
 
     /***
      * ModuleMongo - Construct new module
-     * @param course Course
      * @param mongoDatabase Database connection
+     * @param courseId ID of associated course
      */
-    public ModuleMongo(CourseMongo course, MongoDatabase mongoDatabase) {
-        this.module = new CourseDocument.CourseModuleMongoEntity();
-        this.course = course;
+    public ModuleMongo(MongoDatabase mongoDatabase,
+                       ObjectId courseId) {
+        this.courseId = courseId;
+        this.module = new ModuleDocument();
         this.mongoDatabase = mongoDatabase;
     }
 
@@ -46,14 +51,11 @@ public class ModuleMongo implements Module {
             module.setId(new ObjectId());
         }
         // Save module in course
-        course.addModule(this);
-        course.save();
-
-        // Get lecturer and make sure this module is in their moduleIds
-//        Lecturer lecturer = ef.getLecturer(module.getLecturer().getId().toHexString())
-//                .orElseThrow(IllegalStateException::new);
-//        lecturer.getModules().add(this);
-//        lecturer.save();
+        MongoCollection<CourseDocument> courseCollection = mongoDatabase.getCollection(
+                MongoCollections.COURSE.toString(), CourseDocument.class);
+        Bson filter = Filters.eq("_id", courseId);
+        Bson update = Updates.addToSet("modules", module);
+        courseCollection.findOneAndUpdate(filter, update);
     }
 
     @Override
@@ -92,7 +94,7 @@ public class ModuleMongo implements Module {
     }
 
     @Override
-    public Number getCatPoints() {
+    public Long getCatPoints() {
         return module.getCatPoints();
     }
 
@@ -118,31 +120,12 @@ public class ModuleMongo implements Module {
         }
     }
 
-//    @Override
-//    public Set<Student> getStudents() {
-//        return null;
-//    }
-//
-//    @Override
-//    public void setStudents(Set<Student> students) {
-//
-//    }
-
     @Override
-    public Course getCourse() {
-        return course;
+    public Set<Student> getStudents() {
+        return null;
     }
 
-    @Override
-    public void setCourse(Course course)  {
-        try {
-            this.course = (CourseMongo) course;
-        } catch (ClassCastException e) {
-            throw new IllegalStateException("CourseMongo expected", e);
-        }
-    }
-
-    CourseDocument.CourseModuleMongoEntity getEntity() {
+    ModuleDocument getEntity() {
         return module;
     }
 }

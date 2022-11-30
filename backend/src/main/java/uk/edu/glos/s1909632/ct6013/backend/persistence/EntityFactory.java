@@ -10,9 +10,22 @@ public interface EntityFactory {
     List<Lecturer> getAllLecturers();
 
     Module createModule(Course course);
-    Optional<Module> getModule(String moduleId, String courseId);
+    Optional<Module> getModuleFromCourse(String moduleId, String courseId);
+    List<Module> getModulesFromCourse(List<String> moduleIds, String courseId);
+    /***
+     * Get modules associated with course
+     * @param courseId Course ID
+     * @return List of modules
+     */
+    List<Module> getAllCourseModules(String courseId);
 
-    List<Module> getModules(String courseId);
+    /***
+     * Get modules associated with a student
+     * @param studentId Student ID
+     * @return List of modules
+     */
+    List<StudentModule> getAllStudentModules(String studentId);
+    Optional<StudentModule> getStudentModule(String studentId, String moduleId);
 
     Course createCourse();
     Optional<Course> getCourse(String id);
