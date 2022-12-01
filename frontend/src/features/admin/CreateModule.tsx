@@ -3,14 +3,16 @@ import React, { Suspense } from 'react';
 // LIBRARIES
 import { Alert, Box, Button, Card, CardContent, FormControl, InputLabel, MenuItem, NativeSelect, Select, TextField, Typography } from '@mui/material';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { Controller, useForm } from 'react-hook-form';
+import { Control, Controller, FieldValues, useForm } from 'react-hook-form';
 import { Await, defer, useLoaderData } from 'react-router-dom';
 import * as yup from 'yup';
 
 // APP
 import useRESTSubmit from 'hooks/rest-submit';
-import { Lecturer, Course } from 'types';
+import { Lecturer, Course } from 'lib/types';
 import getJSON from 'lib/getJSON';
+
+import ControlledSelect from 'components/ControlledSelect';
 
 interface FormData {
   name: string;
@@ -103,74 +105,38 @@ const CreateModule = () => {
               ) }
             />
             <Box>
-              <Suspense fallback={ <>😸CourseLoading😸</> }>
-                <Await resolve={ courses } errorElement={ <>😿Error😿</> }>
-                  { (coursesArg: Course[]) => (
-                    <FormControl fullWidth>
-                      <Controller
-                        name="courseId"
-                        control={ control }
-                        rules={ { required: true } }
-                        defaultValue=""
-                        render={ ({ field }) => (
-                          <>
-                            <InputLabel id="course-select-label">Course</InputLabel>
-                            <Select
-                              // eslint-disable-next-line react/jsx-props-no-spreading
-                              { ...field }
-                              labelId="course-select-label"
-                              id="courseId"
-                              label="Course"
-                              error={ errors?.courseId?.message !== undefined }
-                              data-testid="course-select"
-                            >
-                              {coursesArg.map((course: Course) => (
-                                <MenuItem key={ course.id } value={ course.id }>
-                                  {course.name}
-                                </MenuItem>
-                              )) }
-                            </Select>
-                          </>
-                        ) }
-                      />
-                    </FormControl>
-                  ) }
-                </Await>
-              </Suspense>
+              <ControlledSelect
+                data={ courses }
+                control={ control }
+                errorMessage={ errors?.courseId?.message }
+                loadingMessage="Loading courses..."
+                label="Course"
+                name="courseId"
+                rules={ { required: true } }
+                defaultValue=""
+                id="courseId"
+                dataTestId="course-select"
+                menuItemKey="id"
+                menuItemValue="id"
+                menuItemText="name"
+              />
             </Box>
             <Box>
-              <Suspense fallback={ <>😸LecturerLoading😸</> }>
-                <Await resolve={ lecturers } errorElement={ <>😿Error😿</> }>
-                  { (lecturersArg: Lecturer[]) => (
-                    <FormControl fullWidth>
-                      <InputLabel>Lecturer</InputLabel>
-                      <Controller
-                        name="lecturerId"
-                        control={ control }
-                        rules={ { required: true } }
-                        defaultValue=""
-                        render={ ({ field }) => (
-                          <Select
-                            // eslint-disable-next-line react/jsx-props-no-spreading
-                            { ...field }
-                            labelId="lecturer"
-                            id="lecturer"
-                            label="Lecturer"
-                            error={ errors?.lecturerId?.message !== undefined }
-                            data-testid="lecturer-select"
-                          >
-                            {lecturersArg.map((lecturer: Lecturer) => (
-                              <MenuItem key={ lecturer.id } value={ lecturer.id }>
-                                {lecturer.name}
-                              </MenuItem>
-                            )) }
-                          </Select>
-                        ) }
-                      />
-                    </FormControl>
-                  ) }
-                </Await>
-              </Suspense>
+              <ControlledSelect
+                data={ lecturers }
+                control={ control }
+                errorMessage={ errors?.lecturerId?.message }
+                loadingMessage="LecturerLoading"
+                label="Lecturer"
+                name="lecturerId"
+                rules={ { required: true } }
+                defaultValue=""
+                id="lecturer"
+                dataTestId="lecturer-select"
+                menuItemKey="id"
+                menuItemValue="id"
+                menuItemText="name"
+              />
             </Box>
             <Controller
               name="code"
@@ -197,6 +163,7 @@ const CreateModule = () => {
                 <TextField
                   // eslint-disable-next-line react/jsx-props-no-spreading
                   { ...field }
+                  // This is a hack to make the input type number
                   onChange={ (event) => field.onChange(+event.target.value) }
                   variant="filled"
                   label="CAT Points"

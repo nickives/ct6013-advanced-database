@@ -107,6 +107,17 @@ public class StudentSessionBean {
     public RESTCreatedModuleIds registerStudentOnModules(String studentId, List<String> moduleIds) throws UnprocessableEntity {
         Student student = getEntityFactory().getStudent(studentId)
                 .orElseThrow(NotFoundException::new);
+        Long currentStudentCatPoints = getEntityFactory().getAllStudentModules(studentId)
+                .stream()
+                .map(m -> m.getModule().getCatPoints())
+                .reduce(Long::sum)
+                .orElse(0L);
+
+        if (currentStudentCatPoints >= 120) {
+            throw new UnprocessableEntity(
+                    "moduleIds",
+                    "Student already registered on modules");
+        }
 
         String courseId = student.getCourse()
                 .getId()

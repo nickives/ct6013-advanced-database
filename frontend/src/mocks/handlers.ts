@@ -1,6 +1,6 @@
 /* eslint-disable import/no-extraneous-dependencies */
 import { rest } from 'msw';
-import { Course, Lecturer, Module } from 'types';
+import { Course, Lecturer, Module, Student } from 'lib/types';
 
 // MOCK DATA
 // LECTURERS
@@ -10,6 +10,17 @@ for (let i = 0; i < 100; i += 1) {
   lecturers.push({
     id: i.toString(),
     name: lecturerName + i,
+  });
+}
+
+// STUDENTS
+const studentName = 'Jane Doe ';
+const students: Student[] = [];
+for (let i = 0; i < 100; i += 1) {
+  students.push({
+    id: i.toString(),
+    name: studentName + i,
+    courseId: '1',
   });
 }
 
@@ -30,7 +41,10 @@ for (let i = 0; i < 100; i += 1) {
   modules.push({
     id: i.toString(),
     name: moduleName + i,
-    courseId: (i + 1).toString(),
+    code: `CT00${i}`,
+    semester: ((i % 2) + 1).toString(),
+    catPoints: i % 3 === 0 ? 30 : 15,
+    // courseId: (i + 1).toString(),
     lecturerId: (i + 2).toString(),
   });
 }
@@ -73,8 +87,23 @@ export const handlers = [
     );
   }),
 
+  // Handles a GET student request
+  rest.get('/api/student', async (req, res, ctx) => { // 3
+    const pageParam = req.url.searchParams.get('page');
+    const limitParam = req.url.searchParams.get('limit');
+    const page = pageParam ? parseInt(pageParam, 10) : 0;
+    const limit = limitParam ? parseInt(limitParam, 10) : students.length;
+    const start = page * limit;
+    const end = start + limit;
+    const data = students.slice(start, end);
+    return res(
+      ctx.status(200),
+      ctx.json(data),
+    );
+  }),
+
   // Handles a POST course request
-  rest.post('/api/course', async (req, res, ctx) => { // 3
+  rest.post('/api/course', async (req, res, ctx) => { // 4
     const { name }: { name: string } = await req.json();
     if (name === 'errorTest') {
       return res(
@@ -94,7 +123,7 @@ export const handlers = [
   }),
 
   // Handles a POST module request
-  rest.post('/api/:courseId/module', async (req, res, ctx) => { // 4
+  rest.post('/api/course/:courseId/modules', async (req, res, ctx) => { // 5
     const { name }: {
       name: string; lecturerId: string;
     } = await req.json();
@@ -116,7 +145,22 @@ export const handlers = [
   }),
 
   // Handles a GET course request
-  rest.get('/api/course', async (req, res, ctx) => { // 5
+  rest.get('/api/course/:courseId/modules', async (req, res, ctx) => { // 6
+    const pageParam = req.url.searchParams.get('page');
+    const limitParam = req.url.searchParams.get('limit');
+    const page = pageParam ? parseInt(pageParam, 10) : 0;
+    const limit = limitParam ? parseInt(limitParam, 10) : courses.length;
+    const start = page * limit;
+    const end = start + limit;
+    const data = modules.slice(start, end);
+    return res(
+      ctx.status(200),
+      ctx.json(data),
+    );
+  }),
+
+  // Handles a GET course request
+  rest.get('/api/course', async (req, res, ctx) => { // 6
     const pageParam = req.url.searchParams.get('page');
     const limitParam = req.url.searchParams.get('limit');
     const page = pageParam ? parseInt(pageParam, 10) : 0;
@@ -131,7 +175,7 @@ export const handlers = [
   }),
 
   // Handles a POST student request
-  rest.post('/api/student', async (req, res, ctx) => { // 6
+  rest.post('/api/student', async (req, res, ctx) => { // 7
     const { firstName, lastName } = await req.json();
     if (firstName === 'errorTest') {
       return res(
@@ -149,6 +193,25 @@ export const handlers = [
         lastName: lastName,
         number: 's1234567',
       }),
+    );
+  }),
+
+  // Handles a POST student module request
+  rest.post('/api/student/:studentId/modules', async (req, res, ctx) => { // 7
+    const { moduleIds }: { moduleIds: string[] } = await req.json();
+    if (moduleIds.length === 3) {
+      return res(
+        ctx.status(422),
+        ctx.json({
+          status: 422,
+          detail: 'Require 120 CAT points',
+          field: 'moduleIds',
+        }),
+      );
+    }
+    return res(
+      ctx.status(201),
+      ctx.json(moduleIds),
     );
   }),
 ];

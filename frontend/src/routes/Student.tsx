@@ -1,18 +1,18 @@
 import React, { useContext, useLayoutEffect } from 'react';
-import { Container } from '@mui/material';
+import { Container } from '@mui/system';
 import { NavbarContext } from 'features/navbar';
 import { Outlet } from 'react-router-dom';
 
-const adminPages = [
-  { name: 'Create Course', path: '/admin/create-course' },
-  { name: 'Create Module', path: '/admin/create-module' },
-  { name: 'Create Lecturer', path: '/admin/create-lecturer' },
+const studentPages = [
+  { name: 'Logout', path: '/logout' },
+  { name: 'Register Modules', path: '/student/register-modules' },
+  { name: 'View Results', path: '/student/results' },
 ];
 
-export const AdminRoot = () => {
+export const StudentRoot = () => {
   const { updatePages } = useContext(NavbarContext);
   useLayoutEffect(() => {
-    updatePages(adminPages);
+    updatePages(studentPages);
     return () => updatePages([]);
   });
   return (
@@ -22,8 +22,8 @@ export const AdminRoot = () => {
   );
 };
 
-export const AdminIndex = () => (
+export const StudentIndex = () => (
   <Container>
-    Admin
+    Student
   </Container>
 );

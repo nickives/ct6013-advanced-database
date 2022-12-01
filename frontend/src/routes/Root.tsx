@@ -1,12 +1,11 @@
-import React, { useContext, useLayoutEffect, useMemo } from 'react';
+import React from 'react';
 import Container from '@mui/material/Container';
 import { Outlet } from 'react-router-dom';
-import { Navbar, NavbarContext, NavbarItem } from 'features/navbar';
+import { Navbar } from 'features/navbar';
 
 const menuItems = [
   { name: 'Admin', path: '/admin' },
-  { name: 'Student', path: '/student' },
-  { name: 'Lecturer', path: '/lecturer' },
+  { name: 'Register Student', path: '/register-student' },
 ];
 
 const Root = () => (

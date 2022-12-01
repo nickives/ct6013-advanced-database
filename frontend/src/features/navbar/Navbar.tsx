@@ -2,13 +2,16 @@ import React, { useContext } from 'react';
 import { AppBar, Box, Button, Container, IconButton, Menu, MenuItem, Toolbar, Typography } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
 import StorageIcon from '@mui/icons-material/Storage';
-import { Link } from 'react-router-dom';
+import { Link, NavLink, useNavigate } from 'react-router-dom';
+import { ConfigContext, DbChoice } from 'features/appconfig/AppConfig';
 import { NavbarContext } from './NavbarContext';
 import { NavbarProps } from './types';
 
 const Navbar = ({ menuItems }: NavbarProps): JSX.Element => {
   const { pages } = useContext(NavbarContext);
   const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(null);
+  const { dbChoice, setDbChoice, setLoginState } = useContext(ConfigContext);
+  const navigate = useNavigate();
 
   const handleOpenNavMenu = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorElNav(event.currentTarget);
@@ -18,16 +21,25 @@ const Navbar = ({ menuItems }: NavbarProps): JSX.Element => {
     setAnchorElNav(null);
   };
 
+  const changeDbOnClick = () => {
+    setDbChoice(dbChoice === DbChoice.MONGO ? DbChoice.ORACLE : DbChoice.MONGO);
+    setLoginState();
+    window.location.reload();
+  };
+
   return (
     <AppBar position="static">
       <Container>
         <Toolbar>
-          <StorageIcon sx={ { display: { xs: 'flex' }, mr: 1 } } />
+          <Link to="/">
+            <StorageIcon sx={ { display: { xs: 'flex' }, mr: 1 } } />
+          </Link>
           <Typography
             variant="h5"
             noWrap
             component={ Link }
-            to="/"
+            to="#"
+            onClick={ changeDbOnClick }
             sx={ {
               mr: 2,
               display: { xs: 'flex' },
@@ -39,7 +51,7 @@ const Navbar = ({ menuItems }: NavbarProps): JSX.Element => {
               textDecoration: 'none',
             } }
           >
-            CT6013
+            { dbChoice === DbChoice.MONGO ? 'MongoDB' : 'Oracle' }
           </Typography>
           <Box sx={ { flexGrow: 1, display: { xs: 'flex' } } }>
             {pages?.map((p) => (
@@ -86,7 +98,7 @@ const Navbar = ({ menuItems }: NavbarProps): JSX.Element => {
                 <MenuItem
                   key={ page.path }
                   onClick={ handleCloseNavMenu }
-                  component={ Link }
+                  component={ NavLink }
                   to={ page.path }
                 >
                   <Typography textAlign="center">{page.name}</Typography>

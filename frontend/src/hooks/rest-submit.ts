@@ -1,4 +1,5 @@
-import { useState } from 'react';
+import { ConfigContext } from 'features/appconfig/AppConfig';
+import { useContext, useState } from 'react';
 
 interface RESTError {
   error?: string;
@@ -28,6 +29,7 @@ function useRESTSubmit<T, V>(): RestSubmitHook<T, V> {
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<ErrorReturn | undefined>(undefined);
   const [data, setData] = useState<T | undefined>(undefined);
+  const { dbChoice } = useContext(ConfigContext);
 
   async function submitFn(variables: V, url: string) {
     setLoading(true);
@@ -37,7 +39,7 @@ function useRESTSubmit<T, V>(): RestSubmitHook<T, V> {
     try {
       const { location } = window;
       const uriPrefix = `${location.protocol}//${location.host}`;
-      const response = await window.fetch(`${uriPrefix}${url}`, {
+      const response = await window.fetch(`${uriPrefix}${url}?db=${dbChoice.toString()}`, {
         method: 'POST',
         headers: {
           'content-type': 'application/json;charset=UTF-8',
@@ -45,20 +47,24 @@ function useRESTSubmit<T, V>(): RestSubmitHook<T, V> {
         body: JSON.stringify(variables),
       });
       if (!response.ok) {
-        throw new Error(response.statusText);
-      }
-      const decoded: T & RESTError = await response.json();
-      if (decoded?.error) {
-        const message = decoded?.detail
-          ? decoded.detail
-          : decoded?.error
-            ? decoded.error
-            : `Error: Response status ${response.status} ${response.statusText}`;
-        setError({
-          message: message,
-          statusCode: response.status,
-        });
+        try {
+          const decoded: T & RESTError = await response.json();
+          if (decoded?.error || decoded?.detail) {
+            const message = decoded?.detail
+              ? decoded.detail
+              : decoded?.error
+                ? decoded.error
+                : `Error: Response status ${response.status} ${response.statusText}`;
+            setError({
+              message: message,
+              statusCode: response.status,
+            });
+          }
+        } catch (e) {
+          throw new Error(response.statusText);
+        }
       } else {
+        const decoded: T & RESTError = await response.json();
         setData(decoded);
       }
     } catch (err) {
