@@ -2,6 +2,8 @@ package uk.edu.glos.s1909632.ct6013.backend.api;
 
 import jakarta.ejb.EJB;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.*;
@@ -23,7 +25,7 @@ public class LecturerResource {
             id = lecturer.getId()
                     .orElseThrow(() -> new IllegalStateException("Missing Lecturer ID"));
             name = lecturer.getName();
-            modules = "/lecturer/" +
+            modules = "/api/lecturer/" +
                     id +
                     "/modules";
         }
@@ -80,4 +82,55 @@ public class LecturerResource {
                 .entity(lecturers)
                 .build();
     }
+
+    @GET
+    @Path("/{id}/modules")
+    public Response getAllLecturerModules(@PathParam("id") String id) {
+        return Response.ok()
+                .type(MediaType.APPLICATION_JSON)
+                .entity(lecturerSessionBean.getLecturerModules(id))
+                .build();
+    }
+
+    @GET
+    @Path("/{lecturerId}/modules/{moduleId}")
+    public Response getAllLecturerModules(
+            @PathParam("lecturerId") String lecturerId,
+            @PathParam("moduleId") String moduleId
+    ) {
+        return Response.ok()
+                .type(MediaType.APPLICATION_JSON)
+                .entity(lecturerSessionBean.getStudentMarks(lecturerId, moduleId))
+                .build();
+    }
+
+    public final static class ModuleMarks {
+        public final static class StudentMark {
+            @NotEmpty
+            public String studentId;
+
+            @Min(0)
+            @Max(100)
+            public Long mark;
+        }
+
+        @NotEmpty
+        public List<StudentMark> marks;
+    }
+
+    @POST
+    @Path("/{lecturerId}/modules/{moduleId}")
+    public Response submitModuleMarks(
+            @PathParam("lecturerId") String lecturerId,
+            @PathParam("moduleId") String moduleId,
+            @Valid ModuleMarks marks,
+            @Context UriInfo uriInfo
+    ) {
+        LecturerSessionBean.SubmitMarksPayload res = lecturerSessionBean.submitMarks(lecturerId, moduleId, marks);
+        return Response.created(UriBuilder.fromPath(uriInfo.getPath()).build())
+                .type(MediaType.APPLICATION_JSON)
+                .entity(res)
+                .build();
+    }
+
 }

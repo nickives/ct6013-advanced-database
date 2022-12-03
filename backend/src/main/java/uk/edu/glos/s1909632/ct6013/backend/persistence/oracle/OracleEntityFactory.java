@@ -71,6 +71,22 @@ public class OracleEntityFactory implements EntityFactory {
     }
 
     @Override
+    public Optional<Module> getModuleFromLecturer(String moduleId, String lecturerId) {
+        TypedQuery<ModuleEntity> query = em.createQuery(
+                        "SELECT m FROM ModuleEntity m WHERE m.id = :moduleId AND m.lecturer.id = :lecturerId",
+                        ModuleEntity.class
+                )
+                .setParameter("moduleId", moduleId)
+                .setParameter("lecturerId", lecturerId);
+        try {
+            return Optional.of(query.getSingleResult())
+                    .map(m -> new ModuleOracle(m, em));
+        } catch (NoResultException e) {
+            throw new NotFoundException(e);
+        }
+    }
+
+    @Override
     public List<Module> getModulesFromCourse(List<String> moduleIds, String courseId) {
         List<Long> longModuleIds = moduleIds.stream()
                 .map(Long::parseLong)
@@ -108,6 +124,18 @@ public class OracleEntityFactory implements EntityFactory {
                 .getResultList()
                 .stream()
                 .map(m -> new StudentModuleOracle(m, em))
+                .collect(Collectors.toUnmodifiableList());
+    }
+
+    @Override
+    public List<Module> getAllLecturerModules(String lecturerId) {
+        return em.createQuery(
+                        "SELECT m FROM ModuleEntity m WHERE m.lecturer.id = :lecturerId",
+                        ModuleEntity.class)
+                .setParameter("lecturerId", lecturerId)
+                .getResultList()
+                .stream()
+                .map(m -> new ModuleOracle(m, em))
                 .collect(Collectors.toUnmodifiableList());
     }
 

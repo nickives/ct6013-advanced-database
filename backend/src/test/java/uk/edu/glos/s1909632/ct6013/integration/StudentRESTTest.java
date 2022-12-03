@@ -4,19 +4,23 @@ import io.restassured.http.ContentType;
 import io.restassured.path.json.JsonPath;
 import io.restassured.response.Response;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
+import org.junit.jupiter.api.TestMethodOrder;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
+import org.testcontainers.junit.jupiter.Testcontainers;
 
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.*;
-
 import static io.restassured.RestAssured.given;
 import static io.restassured.RestAssured.when;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 
+@Testcontainers
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class StudentRESTTest extends BaseIntegrationTest {
     final private static class StudentTestData {
         final List<Map<String, Object>> oracle = new ArrayList<>();
@@ -32,6 +36,7 @@ public class StudentRESTTest extends BaseIntegrationTest {
         String lecturer;
         List<String> module = new ArrayList<>();
         Map<String, Map<String, Object>> moduleData = new HashMap<>();
+        Map<String, List<Map<String, Object>>> moduleMarks = new HashMap<>();
         String course;
     }
     private static final TestIdContainer oracleTestIds = new TestIdContainer();
@@ -136,7 +141,10 @@ public class StudentRESTTest extends BaseIntegrationTest {
                 oracleTestIds.moduleData.put(id, moduleOracle);
                 moduleOracle.remove("lecturerId");
                 moduleOracle.put("id", id);
-                moduleOracle.put("lecturer", "/lecturer/" + oracleTestIds.lecturer);
+                moduleOracle.put("lecturer", "/api/lecturer/" + oracleTestIds.lecturer);
+                moduleOracle.put("course", "/api/course/" + oracleTestIds.course);
+                moduleOracle.put("studentModules", "/api/course/" +
+                        oracleTestIds.course + "/modules/" + id + "/studentModules");
             }
 
             HashMap<String, Object> moduleMongo = new HashMap<>();
@@ -164,7 +172,10 @@ public class StudentRESTTest extends BaseIntegrationTest {
                 mongoTestIds.moduleData.put(id, moduleMongo);
                 moduleMongo.remove("lecturerId");
                 moduleMongo.put("id", id);
-                moduleMongo.put("lecturer", "/lecturer/" + mongoTestIds.lecturer);
+                moduleMongo.put("lecturer", "/api/lecturer/" + mongoTestIds.lecturer);
+                moduleMongo.put("course", "/api/course/" + mongoTestIds.course);
+                moduleMongo.put("studentModules", "/api/course/" +
+                        mongoTestIds.course + "/modules/" + id + "/studentModules");
             }
         }
 
@@ -290,12 +301,52 @@ public class StudentRESTTest extends BaseIntegrationTest {
                     contentType(ContentType.JSON).
             extract().
                     response();
-
             String responseBody = response.getBody().asString();
             JsonPath jsonPath = new JsonPath(responseBody);
             List<String> res = jsonPath.get("moduleIds");
             assertThat(res).containsAll(testIds.module);
         });
+    }
+
+    @ParameterizedTest
+    @Order(3)
+    @ValueSource(strings = {"", "?db=mongo"})
+    public void should_submit_module_marks(String urlPostfix) {
+        List<Map<String, Object>> studentData = "".equals(urlPostfix)
+                ? testData.oracle
+                : testData.mongo;
+        TestIdContainer testIds = "".equals(urlPostfix)
+                ? oracleTestIds
+                : mongoTestIds;
+
+        testIds.moduleData.forEach((key, value) -> {
+            List<Map<String, Object>> markList = new ArrayList<>();
+            testIds.moduleMarks.put(key, markList);
+            studentData.forEach(s -> {
+                Map<String, Object> mark = new HashMap<>();
+                mark.put("studentId", s.get("id"));
+                mark.put("mark", 25);
+                markList.add(mark);
+            });
+            URL moduleUrl;
+            try {
+                moduleUrl = new URL(baseAppUrl + "/lecturer/" + testIds.lecturer + "/modules/" + key + urlPostfix);
+            } catch (MalformedURLException e) {
+                throw new RuntimeException(e);
+            }
+            Map<String, Object> payload = new HashMap<>();
+            payload.put("marks", markList);
+            given().
+                    contentType(ContentType.JSON).
+                    body(payload).
+            when().
+                    post(moduleUrl).
+            then().
+                    statusCode(201).
+                    contentType(ContentType.JSON).
+                    body("result", equalTo("OK"));
+        });
+
     }
 
     @ParameterizedTest
@@ -309,11 +360,11 @@ public class StudentRESTTest extends BaseIntegrationTest {
                 ? oracleTestIds
                 : mongoTestIds;
 
-        studentData.forEach(s -> testIds.module.forEach(tid -> {
+        studentData.forEach(s -> testIds.module.forEach(moduleId -> {
             URL studentUrl;
             try {
                 studentUrl = new URL(appUrl + "/" + s.get("id") +
-                                             "/modules/" + tid + urlPostfix);
+                                             "/modules/" + moduleId + urlPostfix);
             } catch (MalformedURLException e) {
                 throw new RuntimeException(e);
             }
@@ -322,8 +373,9 @@ public class StudentRESTTest extends BaseIntegrationTest {
             then().
                     statusCode(200).
                     contentType(ContentType.JSON).
-                    body("module", equalTo(testIds.moduleData.get(tid)));
+                    body("module", equalTo(testIds.moduleData.get(moduleId))).
+                    body("mark", equalTo((testIds.moduleMarks.get(moduleId).get(0).get("mark"))))
+            ;
         }));
     }
-
 }

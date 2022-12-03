@@ -13,6 +13,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.mongodb.client.model.Filters.*;
+import static com.mongodb.client.model.Projections.include;
 import static uk.edu.glos.s1909632.ct6013.backend.persistence.mongo.MongoCollections.*;
 
 public class MongoEntityFactory implements EntityFactory {
@@ -64,7 +65,7 @@ public class MongoEntityFactory implements EntityFactory {
         try {
             CourseMongo courseMongo = (CourseMongo) course;
             return new ModuleMongo(mongoDatabase,
-                                   courseMongo.getCourseDocument().getId());
+                                   this, courseMongo.getCourseDocument().getId());
         } catch (ClassCastException e) {
             throw new IllegalStateException("CourseMongo expected");
         }
@@ -81,13 +82,30 @@ public class MongoEntityFactory implements EntityFactory {
     }
 
     @Override
+    public Optional<Module> getModuleFromLecturer(String moduleId, String lecturerId) {
+        ObjectId moduleObjectId = getObjectId(moduleId);
+        ObjectId lecturerObjectId = getObjectId(lecturerId);
+        CourseDocument course = Optional.ofNullable(
+                mongoDatabase.getCollection(COURSE.toString(), CourseDocument.class)
+                        .find(eq("modules.lecturer._id", lecturerObjectId))
+                        .first())
+                .orElseThrow(NotFoundException::new);
+
+        return course.getModules()
+                .stream()
+                .filter(md -> md.getId().equals(moduleObjectId))
+                .findFirst()
+                .map(md -> new ModuleMongo(md, mongoDatabase, this, course.getId()));
+    }
+
+    @Override
     public List<Module> getModulesFromCourse(List<String> moduleIds, String courseId) {
         Set<String> moduleIdSet = new HashSet<>(moduleIds);
         CourseDocument courseDocument = getCourseDocument(getObjectId(courseId));
         return courseDocument.getModules()
                 .stream()
                 .filter(m -> moduleIdSet.contains(m.getId().toHexString()))
-                .map(m -> new ModuleMongo(m, mongoDatabase, getObjectId(courseId)))
+                .map(m -> new ModuleMongo(m, mongoDatabase, this, getObjectId(courseId)))
                 .collect(Collectors.toUnmodifiableList());
     }
 
@@ -99,26 +117,46 @@ public class MongoEntityFactory implements EntityFactory {
                 objectId);
 
         return new ArrayList<>(Optional.ofNullable(courseDocument)
-                                       .map(cd -> new CourseMongo(mongoDatabase, cd))
+                                       .map(cd -> new CourseMongo(mongoDatabase, cd, this))
                                        .orElseThrow(NotFoundException::new)
                                        .getModules());
     }
 
     @Override
     public List<StudentModule> getAllStudentModules(String studentId) {
-        StudentDocument studentDocument = getStudentDocument(getObjectId(studentId))
+        ObjectId studentObjectId = getObjectId(studentId);
+        StudentDocument studentDocument = getStudentDocument(studentObjectId)
                 .orElseThrow(NotFoundException::new);
         ObjectId courseId = studentDocument.getCourseId();
         return studentDocument
                 .getModules()
                 .stream()
-                .map(smd -> new StudentModuleMongo(mongoDatabase, smd, courseId))
+                .map(smd -> new StudentModuleMongo(mongoDatabase, smd, courseId, studentObjectId, this))
                 .collect(Collectors.toUnmodifiableList());
     }
 
     @Override
+    public List<Module> getAllLecturerModules(String lecturerId) {
+        ObjectId lecturerObjectId = getObjectId(lecturerId);
+        List<CourseDocument> courses = new ArrayList<>();
+        mongoDatabase.getCollection(COURSE.toString(), CourseDocument.class)
+                .find(eq("modules.lecturer._id", lecturerObjectId))
+                .projection(include("modules"))
+                .into(courses);
+
+        return courses.stream()
+                .flatMap(c -> c.getModules()
+                        .stream()
+                        .filter(m -> m.getLecturer().getId().equals(lecturerObjectId))
+                        .map(module -> new ModuleMongo(module, mongoDatabase, this, c.getId())))
+                .collect(Collectors.toUnmodifiableList());
+
+    }
+
+    @Override
     public Optional<StudentModule> getStudentModule(String studentId, String moduleId) {
-        StudentDocument studentDocument = getStudentDocument(getObjectId(studentId))
+        ObjectId studentObjectId = getObjectId(studentId);
+        StudentDocument studentDocument = getStudentDocument(studentObjectId)
                 .orElseThrow(NotFoundException::new);
         ObjectId courseId = studentDocument.getCourseId();
         return studentDocument
@@ -126,13 +164,12 @@ public class MongoEntityFactory implements EntityFactory {
                 .stream()
                 .filter(m -> m.getModuleDocument().getId().equals(getObjectId(moduleId)))
                 .findFirst()
-                .map(smd -> new StudentModuleMongo(mongoDatabase, smd, courseId));
-
+                .map(smd -> new StudentModuleMongo(mongoDatabase, smd, courseId, studentObjectId, this));
     }
 
     @Override
     public CourseMongo createCourse() {
-        return new CourseMongo(mongoDatabase);
+        return new CourseMongo(mongoDatabase, this);
     }
 
     @Override
@@ -141,7 +178,7 @@ public class MongoEntityFactory implements EntityFactory {
         CourseDocument course = getCourseDocument(
                 objectId);
         return Optional.ofNullable(course)
-                .map(c -> new CourseMongo(mongoDatabase, c));
+                .map(c -> new CourseMongo(mongoDatabase, c, this));
     }
 
     private CourseDocument getCourseDocument(ObjectId objectId) {
@@ -158,7 +195,7 @@ public class MongoEntityFactory implements EntityFactory {
                     COURSE.toString(),
                     CourseDocument.class)
                 .find()
-                .map(c -> new CourseMongo(mongoDatabase, c))
+                .map(c -> new CourseMongo(mongoDatabase, c, this))
                 .into(new ArrayList<>());
     }
 

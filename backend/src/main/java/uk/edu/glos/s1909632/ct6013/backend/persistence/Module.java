@@ -29,6 +29,6 @@ public interface Module {
 
     void setLecturer(Lecturer lecturer);
 
-    Set<Student> getStudents();
-
+    Set<StudentModule> getStudentModules();
+    String getCourseId();
 }

@@ -3,6 +3,7 @@ package uk.edu.glos.s1909632.ct6013.backend.persistence.mongo.documents;
 import org.bson.codecs.pojo.annotations.BsonId;
 import org.bson.codecs.pojo.annotations.BsonProperty;
 import org.bson.types.ObjectId;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -58,6 +59,7 @@ public final class StudentDocument {
         this.courseId = courseId;
     }
 
+    @NotNull
     public Set<StudentModuleDocument> getModules() {
         if (modules == null) modules = new HashSet<>();
         return modules;

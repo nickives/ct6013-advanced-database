@@ -11,6 +11,7 @@ public interface EntityFactory {
 
     Module createModule(Course course);
     Optional<Module> getModuleFromCourse(String moduleId, String courseId);
+    Optional<Module> getModuleFromLecturer(String moduleId, String lecturerId);
     List<Module> getModulesFromCourse(List<String> moduleIds, String courseId);
     /***
      * Get modules associated with course
@@ -25,6 +26,7 @@ public interface EntityFactory {
      * @return List of modules
      */
     List<StudentModule> getAllStudentModules(String studentId);
+    List<Module> getAllLecturerModules(String lecturerId);
     Optional<StudentModule> getStudentModule(String studentId, String moduleId);
 
     Course createCourse();

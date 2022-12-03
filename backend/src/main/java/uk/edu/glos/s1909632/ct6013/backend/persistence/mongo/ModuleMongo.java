@@ -2,21 +2,28 @@ package uk.edu.glos.s1909632.ct6013.backend.persistence.mongo;
 
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
-import com.mongodb.client.model.Filters;
 import com.mongodb.client.model.Updates;
 import org.bson.conversions.Bson;
 import org.bson.types.ObjectId;
 import uk.edu.glos.s1909632.ct6013.backend.exceptions.UniqueViolation;
 import uk.edu.glos.s1909632.ct6013.backend.persistence.Lecturer;
 import uk.edu.glos.s1909632.ct6013.backend.persistence.Module;
-import uk.edu.glos.s1909632.ct6013.backend.persistence.Student;
+import uk.edu.glos.s1909632.ct6013.backend.persistence.StudentModule;
 import uk.edu.glos.s1909632.ct6013.backend.persistence.mongo.documents.CourseDocument;
 import uk.edu.glos.s1909632.ct6013.backend.persistence.mongo.documents.ModuleDocument;
+import uk.edu.glos.s1909632.ct6013.backend.persistence.mongo.documents.StudentDocument;
+
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
+
+import static com.mongodb.client.model.Filters.eq;
 
 public class ModuleMongo implements Module {
     private final MongoDatabase mongoDatabase;
+    private final MongoEntityFactory ef;
     private final ModuleDocument module;
     private final ObjectId courseId;
 
@@ -24,22 +31,26 @@ public class ModuleMongo implements Module {
      * ModuleMongo - Construct from module retrieved from db
      * @param module Module document from db
      * @param mongoDatabase Database connection
+     * @param ef MongoEntityFactory instance
      */
     public ModuleMongo(ModuleDocument module,
                        MongoDatabase mongoDatabase,
-                       ObjectId courseId) {
+                       MongoEntityFactory ef, ObjectId courseId) {
         this.module = module;
         this.mongoDatabase = mongoDatabase;
+        this.ef = ef;
         this.courseId = courseId;
     }
 
     /***
      * ModuleMongo - Construct new module
      * @param mongoDatabase Database connection
+     * @param ef MongoEntityFactory instance
      * @param courseId ID of associated course
      */
     public ModuleMongo(MongoDatabase mongoDatabase,
-                       ObjectId courseId) {
+                       MongoEntityFactory ef, ObjectId courseId) {
+        this.ef = ef;
         this.courseId = courseId;
         this.module = new ModuleDocument();
         this.mongoDatabase = mongoDatabase;
@@ -53,7 +64,7 @@ public class ModuleMongo implements Module {
         // Save module in course
         MongoCollection<CourseDocument> courseCollection = mongoDatabase.getCollection(
                 MongoCollections.COURSE.toString(), CourseDocument.class);
-        Bson filter = Filters.eq("_id", courseId);
+        Bson filter = eq("_id", courseId);
         Bson update = Updates.addToSet("modules", module);
         courseCollection.findOneAndUpdate(filter, update);
     }
@@ -121,8 +132,23 @@ public class ModuleMongo implements Module {
     }
 
     @Override
-    public Set<Student> getStudents() {
-        return null;
+    public Set<StudentModule> getStudentModules() {
+        List<StudentDocument> students = new ArrayList<>();
+        mongoDatabase.getCollection(MongoCollections.STUDENT.toString(),
+                                           StudentDocument.class)
+                .find(eq("modules.moduleDocument._id", module.getId()))
+                .into(students);
+        return students.stream()
+                .flatMap(student -> student.getModules()
+                        .stream()
+                        .filter(m -> m.getModuleDocument().getId().equals(module.getId()))
+                        .map(sm -> new StudentModuleMongo(mongoDatabase, sm, courseId, student.getId(), ef)))
+                .collect(Collectors.toUnmodifiableSet());
+    }
+
+    @Override
+    public String getCourseId() {
+        return courseId.toHexString();
     }
 
     ModuleDocument getEntity() {

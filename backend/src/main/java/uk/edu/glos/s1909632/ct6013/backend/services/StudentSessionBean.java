@@ -31,8 +31,8 @@ public class StudentSessionBean {
                     .orElseThrow(() -> new IllegalStateException("Missing Student ID"));
             this.firstName = student.getFirstName();
             this.lastName = student.getLastName();
-            this.modules = "/student/" + id + "/modules";
-            this.course = "/course/" + student.getCourse()
+            this.modules = "/api/student/" + id + "/modules";
+            this.course = "/api/course/" + student.getCourse()
                     .getId()
                     .orElseThrow(() -> new IllegalStateException("Missing Course ID"));
         }

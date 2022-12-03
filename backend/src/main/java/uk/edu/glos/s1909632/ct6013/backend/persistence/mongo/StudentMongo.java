@@ -9,7 +9,6 @@ import uk.edu.glos.s1909632.ct6013.backend.persistence.Course;
 import uk.edu.glos.s1909632.ct6013.backend.persistence.Module;
 import uk.edu.glos.s1909632.ct6013.backend.persistence.Student;
 import uk.edu.glos.s1909632.ct6013.backend.persistence.StudentModule;
-import uk.edu.glos.s1909632.ct6013.backend.persistence.mongo.documents.CourseDocument;
 import uk.edu.glos.s1909632.ct6013.backend.persistence.mongo.documents.StudentDocument;
 import uk.edu.glos.s1909632.ct6013.backend.persistence.mongo.documents.StudentModuleDocument;
 
@@ -98,7 +97,7 @@ public class StudentMongo implements Student {
     public Set<StudentModule> getModules() {
         return student.getModules()
                 .stream()
-                .map(sm -> new StudentModuleMongo(mongoDatabase, sm, student.getCourseId()))
+                .map(sm -> new StudentModuleMongo(mongoDatabase, sm, student.getCourseId(), student.getId(), ef))
                 .collect(Collectors.toUnmodifiableSet());
     }
 
@@ -119,15 +118,8 @@ public class StudentMongo implements Student {
     @Override
     public void addToModule(Module module) {
         StudentModuleDocument studentModuleDocument = new StudentModuleDocument();
+        studentModuleDocument.setId(new ObjectId());
         studentModuleDocument.setModuleDocument(((ModuleMongo) module).getEntity());
-        Set<StudentModuleDocument> studentModules = student.getModules() != null
-                ? student.getModules()
-                : new HashSet<>();
-        studentModules.add(studentModuleDocument);
-        student.setModules(studentModules);
-    }
-
-    StudentDocument getDocument() {
-        return student;
+        student.getModules().add(studentModuleDocument);
     }
 }

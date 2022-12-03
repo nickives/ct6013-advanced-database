@@ -26,7 +26,9 @@ public class ModuleResource {
         public final String code;
         public final String semester;
         public final Number catPoints;
+        public final String course;
         public final String lecturer;
+        public final String studentModules;
 
         public ModuleREST(Module module) {
             this.id = module.getId()
@@ -35,10 +37,12 @@ public class ModuleResource {
             this.code = module.getCode();
             this.semester = module.getSemester();
             this.catPoints = module.getCatPoints();
-            this.lecturer = "/lecturer/" +
+            this.course = "/api/course/" + module.getCourseId();
+            this.lecturer = "/api/lecturer/" +
                     module.getLecturer()
                             .getId()
                             .orElseThrow(() -> new IllegalStateException("Missing Lecturer ID"));
+            this.studentModules = this.course + "/modules/" + this.id + "/studentModules";
         }
     }
 

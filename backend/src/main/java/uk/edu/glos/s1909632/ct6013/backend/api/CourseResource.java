@@ -25,7 +25,7 @@ public class CourseResource {
             this.id = course.getId()
                     .orElseThrow(() -> new IllegalStateException("Missing Course ID"));
             this.name = course.getName();
-            this.modules = "/course/" +
+            this.modules = "/api/course/" +
                     id +
                     "/modules";
         }
@@ -90,5 +90,11 @@ public class CourseResource {
                     .entity(e)
                     .build();
         }
+    }
+
+    @GET
+    @Path("/report")
+    public Response getCourseReports() {
+        return Response.noContent().build();
     }
 }

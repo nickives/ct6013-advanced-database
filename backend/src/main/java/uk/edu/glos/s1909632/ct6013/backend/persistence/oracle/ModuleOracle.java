@@ -5,15 +5,12 @@ import jakarta.persistence.PersistenceException;
 import jakarta.transaction.Transactional;
 import org.hibernate.exception.ConstraintViolationException;
 import uk.edu.glos.s1909632.ct6013.backend.exceptions.UniqueViolation;
-import uk.edu.glos.s1909632.ct6013.backend.persistence.Course;
-import uk.edu.glos.s1909632.ct6013.backend.persistence.Lecturer;
+import uk.edu.glos.s1909632.ct6013.backend.persistence.*;
 import uk.edu.glos.s1909632.ct6013.backend.persistence.Module;
-import uk.edu.glos.s1909632.ct6013.backend.persistence.Student;
 import uk.edu.glos.s1909632.ct6013.backend.persistence.oracle.ents.ModuleEntity;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
-
 
 public class ModuleOracle implements Module {
     private final ModuleEntity module;
@@ -125,11 +122,16 @@ public class ModuleOracle implements Module {
     }
 
     @Override
-    public Set<Student> getStudents() {
+    public Set<StudentModule> getStudentModules() {
         return module.getStudentModules()
                 .stream()
-                .map(sme -> new StudentOracle(sme.getStudent(), em))
-                .collect(Collectors.toSet());
+                .map(sme -> new StudentModuleOracle(sme, em))
+                .collect(Collectors.toUnmodifiableSet());
+    }
+
+    @Override
+    public String getCourseId() {
+        return module.getCourse().getId().toString();
     }
 
     public void setCourse(Course course) {

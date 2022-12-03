@@ -21,16 +21,19 @@ public class CourseMongo implements Course {
     private final MongoDatabase mongoDatabase;
     private final MongoCollection<CourseDocument> courseCollection;
     private final CourseDocument course;
+    private final MongoEntityFactory ef;
 
     public CourseMongo(MongoDatabase mongoDatabase,
-                       CourseDocument course) {
+                       CourseDocument course, MongoEntityFactory ef) {
         this.courseCollection = mongoDatabase.getCollection("course", CourseDocument.class);
         this.course = course;
         this.mongoDatabase = mongoDatabase;
+        this.ef = ef;
     }
 
-    public CourseMongo(MongoDatabase mongoDatabase) {
+    public CourseMongo(MongoDatabase mongoDatabase, MongoEntityFactory ef) {
         this.courseCollection = mongoDatabase.getCollection("course", CourseDocument.class);
+        this.ef = ef;
         this.course = new CourseDocument();
         this.mongoDatabase = mongoDatabase;
     }
@@ -92,7 +95,7 @@ public class CourseMongo implements Course {
     public Set<Module> getModules() {
         return course.getModules()
                 .stream()
-                .map(m -> new ModuleMongo(m, mongoDatabase, course.getId()))
+                .map(m -> new ModuleMongo(m, mongoDatabase, ef, course.getId()))
                 .collect(Collectors.toSet());
     }
 
