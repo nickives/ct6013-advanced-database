@@ -18,11 +18,14 @@ public class LoginResource {
     static public final class LoginData {
         @NotEmpty
         public String userId;
+
+        @NotEmpty
+        public String userType;
     }
 
     @POST
     public Response login(@Valid LoginData loginData) {
-        return userSessionBean.doLogin(loginData.userId)
+        return userSessionBean.doLogin(loginData.userId, loginData.userType)
                 .map(Response::ok)
                 .orElseThrow(NotFoundException::new)
                 .type(MediaType.APPLICATION_JSON)

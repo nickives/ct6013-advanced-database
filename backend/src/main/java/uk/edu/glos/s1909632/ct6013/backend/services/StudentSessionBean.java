@@ -4,6 +4,7 @@ import jakarta.ejb.EJB;
 import jakarta.ejb.Stateless;
 import jakarta.transaction.Transactional;
 import jakarta.ws.rs.NotFoundException;
+import uk.edu.glos.s1909632.ct6013.backend.Grade;
 import uk.edu.glos.s1909632.ct6013.backend.api.ModuleResource;
 import uk.edu.glos.s1909632.ct6013.backend.api.StudentResource;
 import uk.edu.glos.s1909632.ct6013.backend.exceptions.UnprocessableEntity;
@@ -48,6 +49,19 @@ public class StudentSessionBean {
         }
     }
 
+    public static final class CourseResultREST {
+        public final List<StudentModuleREST> moduleResults;
+        public final Long averageMark;
+        public final String grade;
+
+        public CourseResultREST(List<StudentModuleREST> moduleResults, Long averageMark,
+                                Grade grade) {
+            this.moduleResults = moduleResults;
+            this.averageMark = averageMark;
+            this.grade = grade.toString();
+        }
+    }
+
     @EJB
     DbChoiceSessionBean dbChoice;
 
@@ -82,11 +96,23 @@ public class StudentSessionBean {
                 .collect(Collectors.toUnmodifiableList());
     }
 
-    public List<StudentModuleREST> getStudentModules(String studentId) {
-        return getEntityFactory().getAllStudentModules(studentId)
+    public CourseResultREST getStudentResults(String studentId) {
+        Student student = getEntityFactory().getStudent(studentId)
+                .orElseThrow(NotFoundException::new);
+
+        List<StudentModuleREST> studentModules = student.getModules()
                 .stream()
                 .map(StudentModuleREST::new)
                 .collect(Collectors.toUnmodifiableList());
+
+        Double averageMark = studentModules.stream()
+                .filter(m -> m.mark != null)
+                .mapToLong(m -> m.mark)
+                .average()
+                .orElse(0);
+
+        Grade grade = student.getGrade();
+        return new CourseResultREST(studentModules, averageMark.longValue(), grade);
     }
 
     public Optional<StudentModuleREST> getModule(String studentId, String moduleId) {

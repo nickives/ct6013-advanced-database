@@ -63,7 +63,7 @@ public class StudentModuleMongo implements StudentModule {
     }
 
     @Override
-    public void setMark(Long mark) {
+    public StudentModule setMark(Long mark) {
         studentModuleDocument.setMark(mark);
         MongoCollection<StudentDocument> studentCollection = mongoDatabase.getCollection(
                 MongoCollections.STUDENT.toString(), StudentDocument.class);
@@ -72,5 +72,6 @@ public class StudentModuleMongo implements StudentModule {
         studentDocument.getModules().remove(studentModuleDocument);
         studentDocument.getModules().add(studentModuleDocument);
         studentCollection.findOneAndReplace(eq("_id", studentId), studentDocument);
+        return this;
     }
 }

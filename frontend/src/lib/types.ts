@@ -39,5 +39,21 @@ export interface StudentREST {
 
 export interface StudentModule {
   module: Module;
-  grade: number;
+  mark: number;
+}
+
+export interface ModuleMarks {
+  module: Module;
+  studentMarks: {
+    studentId: string;
+    firstName: string;
+    lastName: string;
+    mark: number;
+  }[]
+}
+
+export interface CourseResultREST {
+  moduleResults: StudentModule[];
+  averageMark: number;
+  grade: string;
 }

@@ -4,6 +4,7 @@ import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.result.InsertOneResult;
 import org.bson.types.ObjectId;
+import uk.edu.glos.s1909632.ct6013.backend.Grade;
 import uk.edu.glos.s1909632.ct6013.backend.exceptions.UniqueViolation;
 import uk.edu.glos.s1909632.ct6013.backend.persistence.Course;
 import uk.edu.glos.s1909632.ct6013.backend.persistence.Module;
@@ -11,8 +12,6 @@ import uk.edu.glos.s1909632.ct6013.backend.persistence.Student;
 import uk.edu.glos.s1909632.ct6013.backend.persistence.StudentModule;
 import uk.edu.glos.s1909632.ct6013.backend.persistence.mongo.documents.StudentDocument;
 import uk.edu.glos.s1909632.ct6013.backend.persistence.mongo.documents.StudentModuleDocument;
-
-import java.util.HashSet;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
@@ -121,5 +120,16 @@ public class StudentMongo implements Student {
         studentModuleDocument.setId(new ObjectId());
         studentModuleDocument.setModuleDocument(((ModuleMongo) module).getEntity());
         student.getModules().add(studentModuleDocument);
+    }
+
+    @Override
+    public Grade getGrade() {
+        return student.getGrade();
+    }
+
+    @Override
+    public void setGrade(Grade grade) {
+        student.setGrade(grade);
+        save();
     }
 }

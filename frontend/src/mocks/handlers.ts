@@ -1,6 +1,6 @@
 /* eslint-disable import/no-extraneous-dependencies */
 import { rest } from 'msw';
-import { Course, Lecturer, Module, Student } from 'lib/types';
+import { Course, Lecturer, Module, ModuleMarks, Student, StudentModule } from 'lib/types';
 
 // MOCK DATA
 // LECTURERS
@@ -46,6 +46,15 @@ for (let i = 0; i < 100; i += 1) {
     catPoints: i % 3 === 0 ? 30 : 15,
     // courseId: (i + 1).toString(),
     lecturerId: (i + 2).toString(),
+  });
+}
+
+// MODULE RESULTS
+const moduleResults: StudentModule[] = [];
+for (let i = 0; i < 12; i += 1) {
+  moduleResults.push({
+    module: modules[i],
+    mark: Math.floor(Math.random() * 100),
   });
 }
 
@@ -212,6 +221,47 @@ export const handlers = [
     return res(
       ctx.status(201),
       ctx.json(moduleIds),
+    );
+  }),
+
+  // Handles a GET student module request
+  rest.get('/api/student/:studentId/modules', async (req, res, ctx) => { // 8
+    const pageParam = req.url.searchParams.get('page');
+    const limitParam = req.url.searchParams.get('limit');
+    const page = pageParam ? parseInt(pageParam, 10) : 0;
+    const limit = limitParam ? parseInt(limitParam, 10) : courses.length;
+    const start = page * limit;
+    const end = start + limit;
+    const data = moduleResults.slice(start, end);
+    return res(
+      ctx.status(200),
+      ctx.json(data),
+    );
+  }),
+
+  // Handles a GET course request
+  rest.get('/api/lecturer/:lecturerId/modules', async (req, res, ctx) => { // 9
+    const data = modules.slice(0, 20);
+    return res(
+      ctx.status(200),
+      ctx.json(data),
+    );
+  }),
+
+  // Handles a GET course request
+  rest.get('/api/lecturer/:lecturerId/modules/:moduleId', async (req, res, ctx) => { // 10
+    const data: ModuleMarks = {
+      module: modules[0],
+      studentMarks: students.slice(0, 80).map((s) => ({
+        studentId: s.id,
+        firstName: s.name.split(' ')[0],
+        lastName: s.name.split(' ')[1],
+        mark: Math.floor(Math.random() * 100),
+      })),
+    };
+    return res(
+      ctx.status(200),
+      ctx.json(data),
     );
   }),
 ];

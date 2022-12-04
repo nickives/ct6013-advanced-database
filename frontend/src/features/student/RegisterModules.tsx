@@ -25,7 +25,7 @@ interface ModuleCardProps {
 }
 
 const ModulePaper = ({ module, index, register }: ModuleCardProps) => (
-  <Paper key={ module.id } className="grid grid-cols-7 gap-5 mb-5 p-2" elevation={ 12 }>
+  <Paper className="grid grid-cols-7 gap-5 mb-5 p-2" elevation={ 12 }>
     <Box className="col-span-7">
       {`${module.name}: ${module.code}`}
     </Box>

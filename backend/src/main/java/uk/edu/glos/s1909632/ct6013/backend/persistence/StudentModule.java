@@ -5,5 +5,5 @@ public interface StudentModule {
     void setModule(Module module);
     Student getStudent();
     Long getMark();
-    void setMark(Long mark);
+    StudentModule setMark(Long mark);
 }

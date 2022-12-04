@@ -3,16 +3,16 @@ import { ConfigContext } from 'features/appconfig/AppConfig';
 import useRESTSubmit from 'hooks/rest-submit';
 import { UserType, Student, Lecturer, StudentREST } from 'lib/types';
 import { useParams, useNavigate, defer, useLoaderData } from 'react-router-dom';
-import { Box, Button, Card, CardContent, Container, FormControlLabel, Radio, RadioGroup, Typography } from '@mui/material';
+import { Box, Button, Card, CardContent, FormControlLabel, Radio, RadioGroup, Typography } from '@mui/material';
 import getJSON from 'lib/getJSON';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { Controller, useForm } from 'react-hook-form';
+import { useForm } from 'react-hook-form';
 import * as yup from 'yup';
 import ControlledSelect from 'components/ControlledSelect';
-import { NavbarContext } from 'features/navbar';
 
 interface LoginData {
   userId: string;
+  userType: UserType;
 }
 
 interface LoginResult {
@@ -53,7 +53,7 @@ const Login = (): JSX.Element => {
 
   useEffect(() => {
     if (userId) {
-      submitFn({ userId }, '/api/login');
+      submitFn({ userId: userId, userType: UserType.STUDENT }, '/api/login');
     } else if (loginState) {
       navigate(loginState.destination);
     }
@@ -74,7 +74,10 @@ const Login = (): JSX.Element => {
   return (
     <Box
       component="form"
-      onSubmit={ handleSubmit(() => submitFn(getValues(), '/api/login')) }
+      onSubmit={ handleSubmit(() => submitFn({
+        ...getValues(),
+        userType: loginType,
+      }, '/api/login')) }
       sx={ {
         display: 'flex',
         flexDirection: 'column',

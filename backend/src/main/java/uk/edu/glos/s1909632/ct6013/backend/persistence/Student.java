@@ -1,5 +1,7 @@
 package uk.edu.glos.s1909632.ct6013.backend.persistence;
 
+import uk.edu.glos.s1909632.ct6013.backend.Grade;
+
 import java.util.Optional;
 import java.util.Set;
 
@@ -14,4 +16,6 @@ public interface Student {
     Course getCourse();
     void setCourse(Course course);
     void addToModule(Module module);
+    Grade getGrade();
+    void setGrade(Grade grade);
 }

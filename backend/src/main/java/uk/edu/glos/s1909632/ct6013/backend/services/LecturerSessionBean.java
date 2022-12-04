@@ -4,13 +4,13 @@ import jakarta.ejb.EJB;
 import jakarta.ejb.Stateless;
 import jakarta.transaction.Transactional;
 import jakarta.ws.rs.NotFoundException;
+import uk.edu.glos.s1909632.ct6013.backend.StudentGradeCollector;
 import uk.edu.glos.s1909632.ct6013.backend.api.LecturerResource;
 import uk.edu.glos.s1909632.ct6013.backend.api.ModuleResource;
 import uk.edu.glos.s1909632.ct6013.backend.persistence.*;
 import uk.edu.glos.s1909632.ct6013.backend.persistence.Module;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Stateless(name = "LecturerSessionEJB")
@@ -53,25 +53,27 @@ public class LecturerSessionBean {
         public static final class StudentMark {
             public final String firstName;
             public final String lastName;
+            public final String studentId;
             public final Long mark;
 
             public StudentMark(Student student, Long mark) {
                 this.firstName = student.getFirstName();
                 this.lastName = student.getLastName();
+                this.studentId = student.getId()
+                        .orElseThrow(() -> new IllegalStateException("Missing Student ID"));
                 this.mark = mark;
             }
         }
 
         final public List<StudentMark> studentMarks;
-        final public String moduleId;
+        final public ModuleResource.ModuleREST module;
 
         public LecturerStudentMarksREST(Module m) {
             this.studentMarks = m.getStudentModules()
                     .stream()
                     .map(sm -> new StudentMark(sm.getStudent(), sm.getMark()))
                     .collect(Collectors.toUnmodifiableList());
-            this.moduleId = m.getId()
-                    .orElseThrow(IllegalStateException::new);
+            this.module = new ModuleResource.ModuleREST(m);
         }
     }
 
@@ -93,6 +95,7 @@ public class LecturerSessionBean {
 
     }
 
+    @Transactional
     public SubmitMarksPayload submitMarks(String lecturerId, String moduleId,
             LecturerResource.ModuleMarks marks) {
         Module module = getEntityFactory().getModuleFromLecturer(moduleId, lecturerId)
@@ -106,8 +109,19 @@ public class LecturerSessionBean {
                                 .orElseThrow(IllegalStateException::new),
                         v -> v));
         marks.marks.forEach(m -> Optional.ofNullable(modules.get(m.studentId))
-                    .orElseThrow(IllegalStateException::new)
-                    .setMark(m.mark));
+                .orElseThrow(IllegalStateException::new)
+                .setMark(m.mark));
+
+        modules.forEach((key, studentModule) -> {
+            Student student = studentModule.getStudent();
+            StudentGradeCollector.StudentGradeResult grade = student
+                    .getModules()
+                    .stream()
+                    .collect(new StudentGradeCollector());
+            grade.getGrade()
+                    .ifPresent(student::setGrade);
+        });
+
         return new SubmitMarksPayload("OK");
     }
 }

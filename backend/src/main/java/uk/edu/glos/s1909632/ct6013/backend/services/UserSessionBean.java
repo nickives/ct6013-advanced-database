@@ -4,7 +4,6 @@ import jakarta.ejb.EJB;
 import jakarta.ejb.Stateful;
 import jakarta.ejb.StatefulTimeout;
 import jakarta.ws.rs.NotFoundException;
-import uk.edu.glos.s1909632.ct6013.backend.DbChoice;
 import uk.edu.glos.s1909632.ct6013.backend.persistence.Lecturer;
 import uk.edu.glos.s1909632.ct6013.backend.persistence.Student;
 
@@ -31,14 +30,15 @@ public class UserSessionBean {
     public UserSessionBean() {
     }
 
-    public Optional<LoginResult> doLogin(String userId) {
+    public Optional<LoginResult> doLogin(String userId, String userType) {
         student = null;
         lecturer = null;
         LoginResult loginResult = new LoginResult();
-        student = dbChoiceSessionBean.getEntityFactory()
-                .getStudent(userId)
-                .orElse(null);
-        if (student != null) {
+
+        if ("STUDENT".equals(userType)) {
+            student = dbChoiceSessionBean.getEntityFactory()
+                    .getStudent(userId)
+                    .orElseThrow(NotFoundException::new);
             loginResult.destination = "/student";
             loginResult.userId = student.getId()
                     .orElseThrow(IllegalStateException::new);
@@ -47,19 +47,16 @@ public class UserSessionBean {
                     .getId()
                     .orElseThrow(IllegalStateException::new);
             return Optional.of(loginResult);
-        }
-
-        lecturer = dbChoiceSessionBean.getEntityFactory()
-                .getLecturer(userId)
-                .orElse(null);
-        if (lecturer != null) {
+        } else if ("LECTURER".equals(userType)) {
+            lecturer = dbChoiceSessionBean.getEntityFactory()
+                    .getLecturer(userId)
+                    .orElseThrow(NotFoundException::new);
             loginResult.destination = "/lecturer";
             loginResult.userId = lecturer.getId()
                     .orElseThrow(IllegalStateException::new);
             loginResult.name = lecturer.getName();
             return Optional.of(loginResult);
         }
-
         return Optional.empty();
     }
 

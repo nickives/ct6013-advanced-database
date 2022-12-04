@@ -4,6 +4,7 @@ import org.bson.codecs.pojo.annotations.BsonId;
 import org.bson.codecs.pojo.annotations.BsonProperty;
 import org.bson.types.ObjectId;
 import org.jetbrains.annotations.NotNull;
+import uk.edu.glos.s1909632.ct6013.backend.Grade;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -23,6 +24,9 @@ public final class StudentDocument {
 
     @BsonProperty
     private Set<StudentModuleDocument> modules;
+
+    @BsonProperty
+    private Grade grade;
 
     public StudentDocument() {}
 
@@ -68,5 +72,13 @@ public final class StudentDocument {
     public void setModules(
             Set<StudentModuleDocument> modules) {
         this.modules = modules;
+    }
+
+    public Grade getGrade() {
+        return grade;
+    }
+
+    public void setGrade(Grade grade) {
+        this.grade = grade;
     }
 }

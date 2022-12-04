@@ -1,6 +1,7 @@
 package uk.edu.glos.s1909632.ct6013.backend.persistence.oracle;
 
 import jakarta.persistence.EntityManager;
+import uk.edu.glos.s1909632.ct6013.backend.Grade;
 import uk.edu.glos.s1909632.ct6013.backend.persistence.Course;
 import uk.edu.glos.s1909632.ct6013.backend.persistence.Module;
 import uk.edu.glos.s1909632.ct6013.backend.persistence.Student;
@@ -72,18 +73,14 @@ public class StudentOracle implements Student {
 
     @Override
     public Course getCourse() {
-        return student.getCourses()
-                .stream()
-                .findFirst()
-                .map(c -> new CourseOracle(c, em))
-                .orElse(null);
+        return new CourseOracle(student.getCourse(), em);
     }
 
     @Override
     public void setCourse(Course course) {
         try {
             CourseOracle courseOracle = (CourseOracle) course;
-            student.getCourses().add(courseOracle.getEntity());
+            student.setCourse(courseOracle.getEntity());
         } catch (ClassCastException e) {
             throw new IllegalStateException("CourseOracle expected", e);
         }
@@ -106,6 +103,16 @@ public class StudentOracle implements Student {
         sme.setStudent(student);
         sme.setModule(moduleEntity);
         em.persist(sme);
+    }
+
+    @Override
+    public Grade getGrade() {
+        return student.getGrade();
+    }
+
+    @Override
+    public void setGrade(Grade grade) {
+        student.setGrade(grade);
     }
 
     StudentEntity getEntity() {

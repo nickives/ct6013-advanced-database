@@ -2,6 +2,7 @@ package uk.edu.glos.s1909632.ct6013.backend.persistence.oracle.ents;
 
 import jakarta.persistence.*;
 import org.hibernate.annotations.Nationalized;
+import uk.edu.glos.s1909632.ct6013.backend.Grade;
 
 import java.util.LinkedHashSet;
 import java.util.Objects;
@@ -23,14 +24,15 @@ public class StudentEntity {
     @Column(name = "LAST_NAME", nullable = false, length = 20)
     private String lastName;
 
-    @ManyToMany
-    @JoinTable(name = "STUDENT_COURSE",
-            joinColumns = @JoinColumn(name = "STUDENT_ID"),
-            inverseJoinColumns = @JoinColumn(name = "COURSE_ID"))
-    private Set<CourseEntity> courses = new LinkedHashSet<>();
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "COURSE_ID", nullable = false)
+    private CourseEntity course;
 
     @OneToMany(mappedBy = "student")
     private Set<StudentModuleEntity> studentModules = new LinkedHashSet<>();
+
+    @Enumerated(EnumType.STRING)
+    private Grade grade;
 
     public Long getId() {
         return id;
@@ -56,12 +58,12 @@ public class StudentEntity {
         this.lastName = lastName;
     }
 
-    public Set<CourseEntity> getCourses() {
-        return courses;
+    public CourseEntity getCourse() {
+        return course;
     }
 
-    public void setCourses(Set<CourseEntity> courses) {
-        this.courses = courses;
+    public void setCourse(CourseEntity courses) {
+        this.course = courses;
     }
 
     public Set<StudentModuleEntity> getStudentModules() {
@@ -70,6 +72,14 @@ public class StudentEntity {
 
     public void setStudentModules(Set<StudentModuleEntity> studentModules) {
         this.studentModules = studentModules;
+    }
+
+    public Grade getGrade() {
+        return grade;
+    }
+
+    public void setGrade(Grade grade) {
+        this.grade = grade;
     }
 
     @Override

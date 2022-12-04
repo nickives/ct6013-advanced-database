@@ -67,11 +67,11 @@ public class StudentResource {
     }
 
     @GET
-    @Path("/{id}/modules")
+    @Path("/{id}/results")
     public Response getModules(@PathParam("id") String studentId) {
         return Response.ok()
                 .type(MediaType.APPLICATION_JSON)
-                .entity(studentSessionBean.getStudentModules(studentId))
+                .entity(studentSessionBean.getStudentResults(studentId))
                 .build();
     }
 

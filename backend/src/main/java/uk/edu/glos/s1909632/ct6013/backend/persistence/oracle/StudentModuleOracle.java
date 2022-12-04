@@ -41,7 +41,8 @@ public class StudentModuleOracle implements StudentModule {
     }
 
     @Override
-    public void setMark(Long mark) {
+    public StudentModule setMark(Long mark) {
         studentModule.setMark(mark);
+        return this;
     }
 }
