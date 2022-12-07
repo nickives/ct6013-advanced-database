@@ -4,6 +4,7 @@ import { NavbarContext } from 'features/navbar';
 import { Outlet } from 'react-router-dom';
 
 const adminPages = [
+  { name: 'Logout', path: '/logout' },
   { name: 'Create Course', path: '/admin/create-course' },
   { name: 'Create Module', path: '/admin/create-module' },
   { name: 'Create Lecturer', path: '/admin/create-lecturer' },
