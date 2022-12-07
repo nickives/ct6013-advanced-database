@@ -106,9 +106,9 @@ public class ModuleResource {
         } catch (UniqueViolation e) {
             RESTError error = new RESTError(
                     "https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/409",
-                    e.getMessage(),
+                    e.getTitle(),
                     Response.Status.CONFLICT.getStatusCode(),
-                    "Field value must be unique",
+                    e.getDescription(),
                     e.getPropertyName()
             );
             return Response.status(Response.Status.CONFLICT)

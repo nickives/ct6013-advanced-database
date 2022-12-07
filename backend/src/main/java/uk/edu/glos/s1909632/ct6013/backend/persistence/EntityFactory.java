@@ -1,5 +1,7 @@
 package uk.edu.glos.s1909632.ct6013.backend.persistence;
 
+import uk.edu.glos.s1909632.ct6013.backend.CourseStats;
+
 import java.util.List;
 import java.util.Optional;
 
@@ -36,4 +38,5 @@ public interface EntityFactory {
     Student createStudent();
     Optional<Student> getStudent(String id);
     List<Student> getAllStudents();
+    List<CourseStats> getCourseStats();
 }

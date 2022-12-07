@@ -10,7 +10,7 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collector;
 
-public class StudentGradeCollector implements Collector<
+public final class StudentGradeCollector implements Collector<
         StudentModule,
         StudentGradeCollector.StudentGradeAccumulator,
         StudentGradeCollector.StudentGradeResult> {

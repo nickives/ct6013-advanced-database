@@ -7,11 +7,14 @@ import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Root;
 import jakarta.ws.rs.NotFoundException;
+import uk.edu.glos.s1909632.ct6013.backend.CourseStats;
 import uk.edu.glos.s1909632.ct6013.backend.persistence.oracle.ents.*;
 import uk.edu.glos.s1909632.ct6013.backend.persistence.*;
 import uk.edu.glos.s1909632.ct6013.backend.persistence.Module;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -202,5 +205,57 @@ public class OracleEntityFactory implements EntityFactory {
                 .stream()
                 .map(student -> new StudentOracle(student, em))
                 .collect(Collectors.toUnmodifiableList());
+    }
+
+    @Override
+    public List<CourseStats> getCourseStats() {
+        CriteriaBuilder builder = em.getCriteriaBuilder();
+        CriteriaQuery<ViewCourseGradeSplit> courseGradeCriteria = builder
+                .createQuery(ViewCourseGradeSplit.class);
+
+        Root<ViewCourseGradeSplit> courseGradeRoot = courseGradeCriteria.
+                from(ViewCourseGradeSplit.class);
+
+        courseGradeCriteria.select(courseGradeRoot);
+        List<ViewCourseGradeSplit> courseGradeSplits = em.createQuery(courseGradeCriteria)
+                .getResultList();
+
+        CriteriaQuery<ViewModuleAggregateResult> moduleAggregateCriteria = builder
+                .createQuery(ViewModuleAggregateResult.class);
+
+        Root<ViewModuleAggregateResult> moduleAggregateRoot = moduleAggregateCriteria
+                .from(ViewModuleAggregateResult.class);
+
+        moduleAggregateCriteria.select(moduleAggregateRoot);
+
+        Map<Long, List<CourseStats.ModuleStats>> moduleAggregateResults = em.createQuery(moduleAggregateCriteria)
+                .getResultList()
+                .stream()
+                .collect(Collectors.toMap(
+                        // Key mapper
+                        ViewModuleAggregateResult::getCourseId,
+                        // Value mapper
+                        m -> List.of(new CourseStats.ModuleStats(
+                                m.getModuleId().toString(), m.getModuleName(),
+                                m.getAverageMark(), m.getNumberOfStudents())),
+                        // Merge function
+                        (previous, current) -> {
+                            List<CourseStats.ModuleStats> newList = new ArrayList<>(previous);
+                            newList.addAll(current);
+                            return newList;
+                        }));
+
+
+        List<CourseStats> courseStats = new ArrayList<>();
+        courseGradeSplits.forEach(cg -> {
+            CourseStats stats = new CourseStats(cg.getCourseId().toString(), cg.getCourseName(),
+                                                moduleAggregateResults.get(cg.getCourseId()),
+                                                cg.getAverageMark(), cg.getFirst(),
+                                                cg.getTwoOne(), cg.getTwoTwo(), cg.getThird(),
+                                                cg.getFail());
+            courseStats.add(stats);
+        });
+
+        return courseStats;
     }
 }

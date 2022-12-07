@@ -1,7 +1,6 @@
 package uk.edu.glos.s1909632.ct6013.backend.persistence.oracle;
 
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.PersistenceException;
+import jakarta.persistence.*;
 import org.hibernate.exception.ConstraintViolationException;
 import uk.edu.glos.s1909632.ct6013.backend.persistence.Course;
 import uk.edu.glos.s1909632.ct6013.backend.exceptions.UniqueViolation;
@@ -9,8 +8,7 @@ import uk.edu.glos.s1909632.ct6013.backend.persistence.Module;
 import uk.edu.glos.s1909632.ct6013.backend.persistence.Student;
 import uk.edu.glos.s1909632.ct6013.backend.persistence.oracle.ents.CourseEntity;
 
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class CourseOracle implements Course {

@@ -2,8 +2,6 @@ package uk.edu.glos.s1909632.ct6013.backend.persistence.mongo;
 
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
-import com.mongodb.client.model.Updates;
-import org.bson.conversions.Bson;
 import org.bson.types.ObjectId;
 import uk.edu.glos.s1909632.ct6013.backend.exceptions.UniqueViolation;
 import uk.edu.glos.s1909632.ct6013.backend.persistence.Lecturer;
@@ -13,10 +11,7 @@ import uk.edu.glos.s1909632.ct6013.backend.persistence.mongo.documents.CourseDoc
 import uk.edu.glos.s1909632.ct6013.backend.persistence.mongo.documents.ModuleDocument;
 import uk.edu.glos.s1909632.ct6013.backend.persistence.mongo.documents.StudentDocument;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.mongodb.client.model.Filters.eq;
@@ -62,11 +57,23 @@ public class ModuleMongo implements Module {
             module.setId(new ObjectId());
         }
         // Save module in course
+        // Because MongoDB can't enforce unique constraints within document, check
+        // module code uniqueness manually
         MongoCollection<CourseDocument> courseCollection = mongoDatabase.getCollection(
                 MongoCollections.COURSE.toString(), CourseDocument.class);
-        Bson filter = eq("_id", courseId);
-        Bson update = Updates.addToSet("modules", module);
-        courseCollection.findOneAndUpdate(filter, update);
+        CourseDocument course = courseCollection
+                .find(eq("_id", courseId))
+                .first();
+
+        if (course == null) throw new IllegalStateException();
+
+        if (course.getModules().contains(module)) throw new UniqueViolation(
+                "code",
+                "Module code already exists"
+        );
+
+        course.getModules().add(module);
+        new CourseMongo(mongoDatabase, course, ef).save();
     }
 
     @Override

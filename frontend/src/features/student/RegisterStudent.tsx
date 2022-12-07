@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useContext, useLayoutEffect } from 'react';
 
 // LIBRARIES
 import { Alert, Box, Button, Card, CardContent, TextField, Typography } from '@mui/material';
@@ -12,6 +12,7 @@ import ControlledSelect from 'components/ControlledSelect';
 import getJSON from 'lib/getJSON';
 import { defer, Link, useLoaderData } from 'react-router-dom';
 import { Course } from 'lib/types';
+import { NavbarContext } from 'features/navbar';
 
 interface FormData {
   firstName: string;
@@ -41,12 +42,22 @@ export const registerStudentLoader = async () => {
   return defer({ courses });
 };
 
+const loginPages = [
+  { name: 'Logout', path: '/logout' },
+];
+
 const RegisterStudent = () => {
   const {
     control, handleSubmit, getValues, formState: { errors },
   } = useForm<FormData>({ resolver: yupResolver(schema) });
   const [loading, error, data, submitFn] = useRESTSubmit<ResultData, FormData>();
   const { courses } = useLoaderData() as RegisterStudentData;
+  const { updatePages } = useContext(NavbarContext);
+
+  useLayoutEffect(() => {
+    updatePages(loginPages);
+    return () => updatePages([]);
+  }, [updatePages]);
 
   return (
     <Box

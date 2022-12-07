@@ -16,6 +16,7 @@ import ViewResults from 'features/student/ViewResults';
 import { LecturerIndex, LecturerRoot } from 'routes/Lecturer';
 import LecturerModulesList from 'features/lecturer/LecturerModulesList';
 import MarkModule from 'features/lecturer/MarkModule';
+import CourseResults from 'features/lecturer/CourseResults';
 
 // LOCAL
 import './index.css';
@@ -61,6 +62,7 @@ const router = createBrowserRouter(
           <Route index element={ <LecturerIndex /> } />
           <Route path="mark" element={ <LecturerModulesList /> } />
           <Route path="mark/:moduleId" element={ <MarkModule /> } />
+          <Route path="course-stats" element={ <CourseResults /> } />
         </Route>
       </Route>
       <Route path="*" element={ <NoMatch /> } />

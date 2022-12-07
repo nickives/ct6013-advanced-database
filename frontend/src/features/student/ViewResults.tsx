@@ -1,18 +1,18 @@
 import React, { useContext, useEffect, useState } from 'react';
-import { CourseResultREST } from 'lib/types';
+import { StudentResultREST } from 'lib/types';
 import { Box, Card, CardContent, Paper, Typography } from '@mui/material';
 import { ConfigContext } from 'features/appconfig/AppConfig';
 import getJSON from 'lib/getJSON';
 
 const ViewResults = () => {
   const { loginState } = useContext(ConfigContext);
-  const [results, setResults] = useState<CourseResultREST>();
+  const [results, setResults] = useState<StudentResultREST>();
 
   useEffect(() => {
     if (loginState) {
       const fetchModules = async () => {
         // eslint-disable-next-line quotes
-        const courseResult = await getJSON<CourseResultREST>(`/api/student/${loginState.userId}/results`);
+        const courseResult = await getJSON<StudentResultREST>(`/api/student/${loginState.userId}/results`);
         setResults(courseResult);
       };
       fetchModules();

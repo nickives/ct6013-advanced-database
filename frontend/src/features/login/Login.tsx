@@ -1,4 +1,4 @@
-import React, { useContext, useEffect } from 'react';
+import React, { useContext, useEffect, useLayoutEffect } from 'react';
 import { ConfigContext } from 'features/appconfig/AppConfig';
 import useRESTSubmit from 'hooks/rest-submit';
 import { UserType, Student, Lecturer, StudentREST } from 'lib/types';
@@ -9,6 +9,7 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import { useForm } from 'react-hook-form';
 import * as yup from 'yup';
 import ControlledSelect from 'components/ControlledSelect';
+import { NavbarContext } from 'features/navbar';
 
 interface LoginData {
   userId: string;
@@ -21,6 +22,11 @@ interface LoginResult {
   courseId?: string;
   destination: string;
 }
+
+const loginPages = [
+  { name: 'Admin', path: '/admin' },
+  { name: 'Register Student', path: '/register-student' },
+];
 
 export const loginLoader = async () => {
   const students = getJSON<StudentREST[]>('/api/student')
@@ -44,12 +50,18 @@ const Login = (): JSX.Element => {
   const { userId } = useParams();
   const [loading, error, data, submitFn] = useRESTSubmit<LoginResult, LoginData>();
   const { loginState, setLoginState } = useContext(ConfigContext);
+  const { updatePages } = useContext(NavbarContext);
   const navigate = useNavigate();
   const { students, lecturers } = useLoaderData() as LoginLoaderData;
   const [loginType, setLoginType] = React.useState(UserType.STUDENT);
   const {
     control, handleSubmit, getValues, formState: { errors },
   } = useForm<LoginData>({ resolver: yupResolver(schema) });
+
+  useLayoutEffect(() => {
+    updatePages(loginPages);
+    return () => updatePages([]);
+  }, [updatePages]);
 
   useEffect(() => {
     if (userId) {

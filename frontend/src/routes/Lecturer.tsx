@@ -6,6 +6,7 @@ import { Outlet } from 'react-router-dom';
 const studentPages = [
   { name: 'Logout', path: '/logout' },
   { name: 'Mark Modules', path: '/lecturer/mark' },
+  { name: 'Course Stats', path: '/lecturer/course-stats' },
 ];
 
 export const LecturerRoot = () => {

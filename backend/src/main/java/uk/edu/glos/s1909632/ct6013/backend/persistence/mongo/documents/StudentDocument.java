@@ -23,6 +23,9 @@ public final class StudentDocument {
     private ObjectId courseId;
 
     @BsonProperty
+    private String courseName;
+
+    @BsonProperty
     private Set<StudentModuleDocument> modules;
 
     @BsonProperty
@@ -80,5 +83,13 @@ public final class StudentDocument {
 
     public void setGrade(Grade grade) {
         this.grade = grade;
+    }
+
+    public String getCourseName() {
+        return courseName;
+    }
+
+    public void setCourseName(String courseName) {
+        this.courseName = courseName;
     }
 }

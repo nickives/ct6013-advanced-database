@@ -112,6 +112,7 @@ public class StudentMongo implements Student {
                 .map(ObjectId::new)
                 .orElseThrow(() -> new IllegalStateException("Course missing ID"));
         student.setCourseId(courseId);
+        student.setCourseName(course.getName());
     }
 
     @Override

@@ -1,6 +1,7 @@
 --------------------------------------------------------
---  File created - Sunday-December-04-2022   
+--  File created - Tuesday-December-06-2022   
 --------------------------------------------------------
+ALTER SESSION SET CONTAINER = XEPDB1;
 --------------------------------------------------------
 --  DDL for Table COURSE
 --------------------------------------------------------
@@ -53,7 +54,7 @@
    (	"ID" NUMBER GENERATED ALWAYS AS IDENTITY MINVALUE 1 MAXVALUE 9999999999999999999999999999 INCREMENT BY 1 START WITH 1 CACHE 20 NOORDER  NOCYCLE  NOKEEP  NOSCALE , 
 	"FIRST_NAME" NVARCHAR2(20), 
 	"LAST_NAME" NVARCHAR2(20), 
-	"GRADE" NVARCHAR2(5), 
+	"GRADE" NVARCHAR2(8), 
 	"COURSE_ID" NUMBER DEFAULT 1
    ) SEGMENT CREATION IMMEDIATE 
   PCTFREE 10 PCTUSED 40 INITRANS 1 MAXTRANS 255 
@@ -75,6 +76,56 @@
   STORAGE(INITIAL 65536 NEXT 1048576 MINEXTENTS 1 MAXEXTENTS 2147483645
   PCTINCREASE 0 FREELISTS 1 FREELIST GROUPS 1
   BUFFER_POOL DEFAULT FLASH_CACHE DEFAULT CELL_FLASH_CACHE DEFAULT);
+--------------------------------------------------------
+--  DDL for View VIEW_COURSE_GRADE_SPLITS
+--------------------------------------------------------
+
+  CREATE OR REPLACE FORCE EDITIONABLE VIEW "S1909632"."VIEW_COURSE_GRADE_SPLITS" ("COURSE_ID", "COURSE_NAME", "AVERAGE_MARK", "FIRST", "TWO_ONE", "TWO_TWO", "THIRD", "FAIL") AS 
+  SELECT course_id, course_name,
+    AVG(average_mark) average_mark,
+    COUNT (CASE WHEN view_course_student_avg_mark.average_mark >= 70 THEN 1 END) FIRST,
+    COUNT (CASE WHEN view_course_student_avg_mark.average_mark >= 60 AND view_course_student_avg_mark.average_mark < 70 THEN 1 END) TWO_ONE,
+    COUNT (CASE WHEN view_course_student_avg_mark.average_mark >= 50 AND view_course_student_avg_mark.average_mark < 60 THEN 1 END) TWO_TWO,
+    COUNT (CASE WHEN view_course_student_avg_mark.average_mark >= 40 AND view_course_student_avg_mark.average_mark < 50 THEN 1 END) THIRD,
+    COUNT (CASE WHEN view_course_student_avg_mark.average_mark < 40 THEN 1 END) FAIL
+FROM view_course_student_avg_mark
+GROUP BY course_id, course_name
+;
+--------------------------------------------------------
+--  DDL for View VIEW_COURSE_STUDENT_AVG_MARK
+--------------------------------------------------------
+
+  CREATE OR REPLACE FORCE EDITIONABLE VIEW "S1909632"."VIEW_COURSE_STUDENT_AVG_MARK" ("COURSE_ID", "COURSE_NAME", "STUDENT_ID", "STUDENT_FIRST_NAME", "STUDENT_LAST_NAME", "AVERAGE_MARK") AS 
+  SELECT course.id as course_id,
+    course.name as course_name,
+    student.id as student_id, 
+    student.first_name as student_first_name, 
+    student.last_name as student_last_name, 
+    AVG(mark) as average_mark
+FROM course
+INNER JOIN module
+ON course.id = module.course_id
+INNER JOIN student_module
+ON module.id = student_module.module_id
+INNER JOIN student
+ON student_module.student_id = student.id
+GROUP BY course.id, course.name, student.id, student.first_name, student.last_name
+;
+--------------------------------------------------------
+--  DDL for View VIEW_MODULE_AGGREGATE_RESULTS
+--------------------------------------------------------
+
+  CREATE OR REPLACE FORCE EDITIONABLE VIEW "S1909632"."VIEW_MODULE_AGGREGATE_RESULTS" ("COURSE_ID", "MODULE_ID", "MODULE_NAME", "AVERAGE_MARK", "NUMBER_OF_STUDENTS") AS 
+  SELECT course.id as course_id, module.id as module_id, module.name as module_name,
+    AVG(student_module.mark) as average_mark,
+    COUNT(student_module.mark) as number_of_students
+FROM course
+INNER JOIN module
+ON course.id = module.course_id
+INNER JOIN student_module
+ON module.id = student_module.module_id
+GROUP BY course.id, module.id, module.name
+;
 --------------------------------------------------------
 --  DDL for Index COURSE_NAME
 --------------------------------------------------------

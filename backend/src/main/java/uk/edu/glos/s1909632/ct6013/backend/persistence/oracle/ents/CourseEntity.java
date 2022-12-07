@@ -21,10 +21,7 @@ public class CourseEntity {
     @Column(name = "NAME", nullable = false, length = 20)
     private String name;
 
-    @ManyToMany
-    @JoinTable(name = "STUDENT_COURSE",
-            joinColumns = @JoinColumn(name = "COURSE_ID"),
-            inverseJoinColumns = @JoinColumn(name = "STUDENT_ID"))
+    @OneToMany(mappedBy = "course")
     private Set<StudentEntity> students = new LinkedHashSet<>();
 
     @OneToMany(mappedBy = "course")

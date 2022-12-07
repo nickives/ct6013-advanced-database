@@ -5,7 +5,6 @@ import org.bson.codecs.pojo.annotations.BsonProperty;
 import org.bson.types.ObjectId;
 
 import java.util.Objects;
-import java.util.Optional;
 
 final public class ModuleDocument {
     @BsonId
@@ -82,13 +81,11 @@ final public class ModuleDocument {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         ModuleDocument that = (ModuleDocument) o;
-        return Objects.equals(getId(), that.getId());
+        return getCode().equals(that.getCode());
     }
 
     @Override
     public int hashCode() {
-        return Optional.ofNullable(getId())
-                .map(ObjectId::hashCode)
-                .orElse(super.hashCode());
+        return Objects.hash(getCode());
     }
 }
