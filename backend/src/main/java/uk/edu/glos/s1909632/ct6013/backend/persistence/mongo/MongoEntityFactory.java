@@ -120,8 +120,7 @@ public class MongoEntityFactory implements EntityFactory {
     public List<Module> getAllCourseModules(String courseId) {
         ObjectId objectId = getObjectId(courseId);
 
-        CourseDocument courseDocument = getCourseDocument(
-                objectId);
+        CourseDocument courseDocument = getCourseDocument(objectId);
 
         return new ArrayList<>(Optional.ofNullable(courseDocument)
                                        .map(cd -> new CourseMongo(mongoDatabase, cd, this))
