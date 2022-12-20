@@ -26,6 +26,7 @@ public class StudentSessionBean {
         public final String lastName;
         public final String modules;
         public final String course;
+        public final String courseYear;
 
         public StudentREST(Student student) {
             this.id = student.getId()
@@ -36,6 +37,7 @@ public class StudentSessionBean {
             this.course = "/api/course/" + student.getCourse()
                     .getId()
                     .orElseThrow(() -> new IllegalStateException("Missing Course ID"));
+            this.courseYear = student.getCourseYear();
         }
     }
 
@@ -84,6 +86,7 @@ public class StudentSessionBean {
         Student student = getEntityFactory().createStudent();
         student.setFirstName(studentInput.firstName);
         student.setLastName(studentInput.lastName);
+        student.setCourseYear(studentInput.courseYear);
         student.setCourse(course);
         student.save();
         return new StudentREST(student);

@@ -36,6 +36,7 @@ public class CourseStats {
 
     private final String courseId;
     private final String courseName;
+    private final String courseYear;
     private final List<ModuleStats> moduleStats;
     private final double averageMark;
     private final Long firstGrades;
@@ -44,11 +45,12 @@ public class CourseStats {
     private final Long thirdGrades;
     private final Long failGrades;
 
-    public CourseStats(String courseId, String courseName, List<ModuleStats> moduleStats,
+    public CourseStats(String courseId, String courseName, String courseYear, List<ModuleStats> moduleStats,
                        double averageMark, Long firstGrades, Long twoOneGrades,
                        Long twoTwoGrades, Long thirdGrades, Long failGrades) {
         this.courseId = courseId;
         this.courseName = courseName;
+        this.courseYear = courseYear;
         this.moduleStats = moduleStats;
         this.averageMark = averageMark;
         this.firstGrades = firstGrades;
@@ -64,6 +66,10 @@ public class CourseStats {
 
     public String getCourseName() {
         return courseName;
+    }
+
+    public String getCourseYear() {
+        return courseYear;
     }
 
     public List<ModuleStats> getModuleStats() {

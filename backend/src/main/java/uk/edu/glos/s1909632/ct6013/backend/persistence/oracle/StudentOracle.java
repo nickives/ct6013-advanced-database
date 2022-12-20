@@ -115,6 +115,16 @@ public class StudentOracle implements Student {
         student.setGrade(grade);
     }
 
+    @Override
+    public String getCourseYear() {
+        return student.getCourseYear();
+    }
+
+    @Override
+    public void setCourseYear(String courseYear) {
+        student.setCourseYear(courseYear);
+    }
+
     StudentEntity getEntity() {
         return student;
     }

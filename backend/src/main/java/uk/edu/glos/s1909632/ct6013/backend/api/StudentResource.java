@@ -33,6 +33,9 @@ public class StudentResource {
 
         @NotEmpty
         public String courseId;
+
+        @NotEmpty
+        public String courseYear;
     }
 
     @POST

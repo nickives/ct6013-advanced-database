@@ -12,6 +12,9 @@ public final class CourseStatsDocument {
         @BsonProperty
         private String courseName;
 
+        @BsonProperty
+        private String courseYear;
+
         public CourseStatsDocumentId() {}
 
         public ObjectId getCourseId() {
@@ -28,6 +31,14 @@ public final class CourseStatsDocument {
 
         public void setCourseName(String courseName) {
             this.courseName = courseName;
+        }
+
+        public String getCourseYear() {
+            return courseYear;
+        }
+
+        public void setCourseYear(String courseYear) {
+            this.courseYear = courseYear;
         }
     }
 

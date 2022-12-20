@@ -22,6 +22,9 @@ public class ViewModuleAggregateResult {
     @Column(name = "COURSE_ID", nullable = false)
     private Long courseId;
 
+    @Column(name = "COURSE_YEAR", nullable = false)
+    private String courseYear;
+
     @Column(name = "MODULE_ID", nullable = false)
     private Long moduleId;
 
@@ -37,6 +40,10 @@ public class ViewModuleAggregateResult {
 
     public Long getCourseId() {
         return courseId;
+    }
+
+    public String getCourseYear() {
+        return courseYear;
     }
 
     public Long getModuleId() {

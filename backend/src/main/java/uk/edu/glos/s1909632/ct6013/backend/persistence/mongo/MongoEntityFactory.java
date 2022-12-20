@@ -278,6 +278,7 @@ public class MongoEntityFactory implements EntityFactory {
         final Bson moduleProjectionFields = fields(
                 eq("courseId", "$courseId"),
                 eq("courseName", "$courseName"),
+                eq("courseYear", "$courseYear"),
                 eq("moduleId", "$modules.moduleDocument._id"),
                 eq("moduleName", "$modules.moduleDocument.name"),
                 eq("mark", "$modules.mark")
@@ -291,6 +292,7 @@ public class MongoEntityFactory implements EntityFactory {
                         Aggregates.group(fields(
                                 eq("courseId", "$courseId"),
                                 eq("courseName", "$courseName"),
+                                eq("courseYear", "$courseYear"),
                                 eq("moduleId", "$moduleId"),
                                 eq("moduleName", "$moduleName")),
                             Accumulators.avg("averageMark", "$mark"),
@@ -319,7 +321,7 @@ public class MongoEntityFactory implements EntityFactory {
                 .map(csd -> new CourseStats(
                         csd.getId().getCourseId().toHexString(),
                         csd.getId().getCourseName(),
-                        moduleStats.get(csd.getId().getCourseId()),
+                        csd.getId().getCourseYear(), moduleStats.get(csd.getId().getCourseId()),
                         csd.getAverageMark(), csd.getFirst(), csd.getTwoOne(),
                         csd.getTwoTwo(), csd.getThird(), csd.getFail()))
                 .collect(Collectors.toUnmodifiableList());

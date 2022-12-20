@@ -133,4 +133,14 @@ public class StudentMongo implements Student {
         student.setGrade(grade);
         save();
     }
+
+    @Override
+    public String getCourseYear() {
+        return student.getCourseYear();
+    }
+
+    @Override
+    public void setCourseYear(String courseYear) {
+        student.setCourseYear(courseYear);
+    }
 }

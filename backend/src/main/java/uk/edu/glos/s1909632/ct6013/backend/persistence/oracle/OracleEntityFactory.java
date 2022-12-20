@@ -228,12 +228,13 @@ public class OracleEntityFactory implements EntityFactory {
 
         moduleAggregateCriteria.select(moduleAggregateRoot);
 
-        Map<Long, List<CourseStats.ModuleStats>> moduleAggregateResults = em.createQuery(moduleAggregateCriteria)
+        // Key is CourseId + CourseYear
+        Map<String, List<CourseStats.ModuleStats>> moduleAggregateResults = em.createQuery(moduleAggregateCriteria)
                 .getResultList()
                 .stream()
                 .collect(Collectors.toMap(
                         // Key mapper
-                        ViewModuleAggregateResult::getCourseId,
+                        k -> k.getCourseId().toString() + k.getCourseYear(),
                         // Value mapper
                         m -> List.of(new CourseStats.ModuleStats(
                                 m.getModuleId().toString(), m.getModuleName(),
@@ -249,7 +250,8 @@ public class OracleEntityFactory implements EntityFactory {
         List<CourseStats> courseStats = new ArrayList<>();
         courseGradeSplits.forEach(cg -> {
             CourseStats stats = new CourseStats(cg.getCourseId().toString(), cg.getCourseName(),
-                                                moduleAggregateResults.get(cg.getCourseId()),
+                                                cg.getCourseYear(), moduleAggregateResults.get(
+                                                        cg.getCourseId().toString() + cg.getCourseYear()),
                                                 cg.getAverageMark(), cg.getFirst(),
                                                 cg.getTwoOne(), cg.getTwoTwo(), cg.getThird(),
                                                 cg.getFail());

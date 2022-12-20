@@ -28,6 +28,9 @@ public class StudentEntity {
     @JoinColumn(name = "COURSE_ID", nullable = false)
     private CourseEntity course;
 
+    @Column(name = "COURSE_YEAR", nullable = false, length = 20)
+    private String courseYear;
+
     @OneToMany(mappedBy = "student")
     private Set<StudentModuleEntity> studentModules = new LinkedHashSet<>();
 
@@ -80,6 +83,14 @@ public class StudentEntity {
 
     public void setGrade(Grade grade) {
         this.grade = grade;
+    }
+
+    public String getCourseYear() {
+        return courseYear;
+    }
+
+    public void setCourseYear(String courseYear) {
+        this.courseYear = courseYear;
     }
 
     @Override

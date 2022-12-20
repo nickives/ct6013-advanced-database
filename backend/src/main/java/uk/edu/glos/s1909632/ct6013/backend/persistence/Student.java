@@ -18,4 +18,6 @@ public interface Student {
     void addToModule(Module module);
     Grade getGrade();
     void setGrade(Grade grade);
+    String getCourseYear();
+    void setCourseYear(String courseYear);
 }

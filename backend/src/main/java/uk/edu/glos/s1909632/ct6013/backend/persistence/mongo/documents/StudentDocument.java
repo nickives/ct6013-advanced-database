@@ -31,6 +31,9 @@ public final class StudentDocument {
     @BsonProperty
     private Grade grade;
 
+    @BsonProperty
+    private String courseYear;
+
     public StudentDocument() {}
 
     public ObjectId getId() {
@@ -91,5 +94,13 @@ public final class StudentDocument {
 
     public void setCourseName(String courseName) {
         this.courseName = courseName;
+    }
+
+    public String getCourseYear() {
+        return courseYear;
+    }
+
+    public void setCourseYear(String courseYear) {
+        this.courseYear = courseYear;
     }
 }

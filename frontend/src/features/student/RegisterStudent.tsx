@@ -18,6 +18,7 @@ interface FormData {
   firstName: string;
   lastName: string;
   courseId: string;
+  courseYear: string;
 }
 
 interface ResultData {
@@ -35,6 +36,7 @@ const schema = yup.object({
   firstName: yup.string().required('First name is required'),
   lastName: yup.string().required('Last name is required'),
   courseId: yup.string().required('Pick a course'),
+  courseYear: yup.string().required('Pick a year'),
 }).required();
 
 export const registerStudentLoader = async () => {
@@ -44,6 +46,13 @@ export const registerStudentLoader = async () => {
 
 const loginPages = [
   { name: 'Logout', path: '/logout' },
+];
+
+const years = [
+  { key: '2021' },
+  { key: '2022' },
+  { key: '2023' },
+  { key: '2024' },
 ];
 
 const RegisterStudent = () => {
@@ -126,6 +135,21 @@ const RegisterStudent = () => {
               menuItemKey="id"
               menuItemValue="id"
               menuItemText="name"
+            />
+            <ControlledSelect
+              data={ years }
+              control={ control }
+              errorMessage={ errors?.courseYear?.message }
+              loadingMessage="Loading years..."
+              label="Year"
+              name="courseYear"
+              rules={ { required: true } }
+              defaultValue=""
+              id="courseYear"
+              dataTestId="year-select"
+              menuItemKey="key"
+              menuItemValue="key"
+              menuItemText="key"
             />
             <Box />
             <Box />

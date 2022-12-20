@@ -22,6 +22,9 @@ public class ViewCourseGradeSplit {
     @Column(name = "COURSE_NAME", nullable = false, length = 20)
     private String courseName;
 
+    @Column(name = "COURSE_YEAR", nullable = false, length = 20)
+    private String courseYear;
+
     @Column(name = "AVERAGE_MARK")
     private Double averageMark;
 
@@ -46,6 +49,10 @@ public class ViewCourseGradeSplit {
 
     public String getCourseName() {
         return courseName;
+    }
+
+    public String getCourseYear() {
+        return courseYear;
     }
 
     public Double getAverageMark() {

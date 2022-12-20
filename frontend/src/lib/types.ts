@@ -35,6 +35,7 @@ export interface StudentREST {
   lastName: string;
   modules: string;
   course: string;
+  courseYear: string;
 }
 
 export interface StudentModule {
@@ -61,6 +62,7 @@ export interface StudentResultREST {
 export interface CourseResultsREST {
   courseId: string;
   courseName: string;
+  courseYear: string;
   averageMark: number;
   firstGrades: number;
   twoOneGrades: number;
