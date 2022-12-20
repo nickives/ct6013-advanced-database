@@ -137,6 +137,16 @@ const Login = (): JSX.Element => {
           </Box>
         </CardContent>
       </Card>
+      <Card raised className="mt-5">
+        <CardContent>
+          <p>Pick a user to login as. You can log in as a lecturer or a student.</p>
+          <br />
+          <p>
+            Click top left to change between Oracle and MongoDB. This will reset the
+            application and return you to the login screen.
+          </p>
+        </CardContent>
+      </Card>
     </Box>
   );
 };

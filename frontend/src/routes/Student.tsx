@@ -2,6 +2,7 @@ import React, { useContext, useLayoutEffect } from 'react';
 import { Container } from '@mui/system';
 import { NavbarContext } from 'features/navbar';
 import { Outlet } from 'react-router-dom';
+import { Card, CardContent } from '@mui/material';
 
 const studentPages = [
   { name: 'Logout', path: '/logout' },
@@ -24,6 +25,10 @@ export const StudentRoot = () => {
 
 export const StudentIndex = () => (
   <Container>
-    Student
+    <Card raised className="mt-5">
+      <CardContent>
+        Select a page from the navbar.
+      </CardContent>
+    </Card>
   </Container>
 );

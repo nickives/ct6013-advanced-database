@@ -11,9 +11,7 @@ const menuItems = [
 const Root = () => (
   <>
     <Container>
-      <Navbar
-        menuItems={ menuItems }
-      />
+      <Navbar />
     </Container>
     <Container>
       <Outlet />

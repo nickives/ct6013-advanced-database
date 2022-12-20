@@ -1,5 +1,5 @@
 import React, { useContext, useLayoutEffect } from 'react';
-import { Container } from '@mui/material';
+import { Card, CardContent, Container } from '@mui/material';
 import { NavbarContext } from 'features/navbar';
 import { Outlet } from 'react-router-dom';
 
@@ -24,6 +24,10 @@ export const LecturerRoot = () => {
 
 export const LecturerIndex = () => (
   <Container>
-    Lecturer
+    <Card raised className="mt-5">
+      <CardContent>
+        Select a page from the navbar.
+      </CardContent>
+    </Card>
   </Container>
 );

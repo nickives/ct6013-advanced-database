@@ -2,7 +2,6 @@
 import React from 'react';
 import { ComponentStory, ComponentMeta } from '@storybook/react';
 import { withRouter } from 'storybook-addon-react-router-v6';
-import { within, userEvent } from '@storybook/testing-library';
 
 import { NavbarProps, Navbar, NavbarProvider } from './index';
 
@@ -24,7 +23,7 @@ export default {
   ],
 } as ComponentMeta<typeof Navbar>;
 
-const Template: ComponentStory<typeof Navbar> = (args: NavbarProps) => <Navbar { ...args } />;
+const Template: ComponentStory<typeof Navbar> = () => <Navbar />;
 
 export const Default = Template.bind({});
 Default.args = {
