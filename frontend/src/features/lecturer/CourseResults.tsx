@@ -1,5 +1,5 @@
 import { ExpandLess, ExpandMore } from '@mui/icons-material';
-import { Box, Card, CardContent, Collapse, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography } from '@mui/material';
+import { Box, Card, CardContent, Collapse, FormControl, InputLabel, MenuItem, Paper, Select, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography } from '@mui/material';
 import getJSON from 'lib/getJSON';
 import { CourseResultsREST } from 'lib/types';
 import React, { Suspense, useEffect, useReducer, useState } from 'react';
@@ -119,6 +119,8 @@ const moduleViewStateReducer = (state: ModuleViewState, action: ModuleViewState)
 
 const CourseResults = () => {
   const [results, setResults] = useState<CourseResultsREST[]>();
+  const [years, setYears] = useState<string[]>();
+  const [selectedYear, setSelectedYear] = useState<string>('');
   const [
     moduleViewState, dispatchModuleViewState,
   ] = useReducer(moduleViewStateReducer, {});
@@ -127,6 +129,10 @@ const CourseResults = () => {
     const fetchResults = async () => {
       const res = await getJSON<CourseResultsREST[]>('/api/course-stats');
       setResults(res);
+      const courseYears = res.map((course) => course.courseYear)
+        .filter((year, index, self) => self.indexOf(year) === index);
+      setYears(courseYears);
+      setSelectedYear(courseYears[0]);
       dispatchModuleViewState({});
     };
     fetchResults();
@@ -148,9 +154,28 @@ const CourseResults = () => {
           <Typography variant="h4">Course Results</Typography>
         </CardContent>
       </Card>
+      <Card raised className="mb-5">
+        <CardContent>
+          <FormControl>
+            <InputLabel id="year-select-label">Year</InputLabel>
+            <Select
+              labelId="year-select-label"
+              id="year-select"
+              value={ selectedYear }
+              onChange={ (e) => setSelectedYear(e.target.value) }
+            >
+              { years?.map((year) => (
+                <MenuItem key={ year } value={ year }>
+                  {year}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+        </CardContent>
+      </Card>
       <Suspense fallback={ <>😸Loading!😸</> }>
         <Await resolve={ results } errorElement={ <>😿Error😿</> }>
-          { results?.map((course) => (
+          { results?.filter((course) => course.courseYear === selectedYear).map((course) => (
             <CourseCard
               key={ course.courseId }
               course={ course }

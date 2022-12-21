@@ -255,6 +255,7 @@ public class MongoEntityFactory implements EntityFactory {
         final Bson courseProjectionFields = fields(
                 eq("courseId", "$courseId"),
                 eq("courseName", "$courseName"),
+                eq("courseYear", "$courseYear"),
                 eq("mark", "$modules.mark"),
                 eq("grade", "$grade"));
 
@@ -265,7 +266,8 @@ public class MongoEntityFactory implements EntityFactory {
                         Aggregates.project(courseProjectionFields),
                         Aggregates.group(fields(
                                 eq("courseId", "$courseId"),
-                                eq("courseName", "$courseName")),
+                                eq("courseName", "$courseName"),
+                                eq("courseYear", "$courseYear")),
                             Accumulators.avg("averageMark", "$mark"),
                             Accumulators.sum("first", firstGradeCondition),
                             Accumulators.sum("twoOne", twoOneGradeCondition),
